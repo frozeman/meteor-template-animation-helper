@@ -63,7 +63,7 @@ Get the current template set in an `Session` key and place it inside the current
 @return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
 **/
 Handlebars.registerHelper('AnimateTemplate', function (keyName) {
-    return Helpers.getTemplate('animationTemplate',{SessionKey: keyName});
+    return Helpers.getTemplate('template-animation-helper',{SessionKey: keyName});
 });
 
 
@@ -75,7 +75,7 @@ which will be used to store the timeOut ID of the fade out animation duration.
 @method created
 @return undefined
 **/
-Template['animationTemplate'].created = function(){
+Template['template-animation-helper'].created = function(){
     var template = this;
 
     // set an animation timeout, used the by the timeout in the reactiveAnimator helper function.
@@ -90,7 +90,7 @@ and animates it accordingly.
 @method rendered
 @return undefined
 **/
-Template['animationTemplate'].rendered = function(){
+Template['template-animation-helper'].rendered = function(){
     var template = this,
         animateTemplate = Session.get(template.data.SessionKey),
         $animateElement = $(template.findAll('.animate'));
@@ -115,7 +115,7 @@ Template['animationTemplate'].rendered = function(){
     });
 };
 
-Template['animationTemplate'].destroyed = function(){ 
+Template['template-animation-helper'].destroyed = function(){ 
 };
 
 
@@ -126,7 +126,7 @@ This triggers the `animateTemplates` `rerendered` method to be called and animat
 @method reactiveAnimator
 @return undefined
 **/
-Template['animationTemplate'].reactiveAnimator = function(){
+Template['template-animation-helper'].reactiveAnimator = function(){
     var data = this,
         animateTemplate = Session.get(data.SessionKey);
 
@@ -197,6 +197,11 @@ Shows the template to animate. This gets the template from `'_' + SessionKey` se
 @method template
 @return {Object} the current template
 **/
-Template['animationTemplate'].template = function(){
-    return Helpers.getTemplate(Session.get('_'+ this.SessionKey));
+Template['template-animation-helper'].template = function(){
+    var template = Template[Session.get('_'+ this.SessionKey)];
+    if(template)
+        return template();
+    else
+        return '';
 };
+
