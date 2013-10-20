@@ -49,3 +49,9 @@ To fade in the template from above at the position of the helper call
 To fade out the template call
 
     Session.set('mySessionKey', false);
+
+Additional you can call
+
+    Session.set('mySessionKey', 'reload');
+
+To reload the last template. This will call the destroyed and created method of that template again.
