@@ -6,16 +6,14 @@ Template helpers
 
 
 /**
-The `animationTemplate` template helpers
-
 This helper template makes it possible to animate templates.
-Use the `{{AnimationTemplate}}` helper and pass it a `Session` key name like {{AnimationTemplate "myKey"}}.
-Then use the `Session.set('keyName', 'templateName')` to render a template at the position of the `{{AnimationTemplate}}` helper.
+Use the `{{AnimateTemplate}}` helper and pass it a `Session` key name like {{AnimateTemplate "myKey"}}.
+Then use the `Session.set('keyName', 'templateName')` to render a template at the position of the `{{AnimateTemplate}}` helper.
 
 You can also call `Session.set('keyName', 'reload')` to reload the current template, which will call the `destroyed` and `created` method of this template again.
 
 Additional you have to add a `animate` class to an element inside your template, which you want to animate.
-The AnimationTemplate will then add and remove a `hidden` class to show the template.
+The AnimateTemplate will then add and remove a `hidden` class to show the template.
 And re-add the `hidden` class before removing the template.
 This way the template fades in and out according to the transitions you set to the `hidden` class of that element.
 
@@ -41,7 +39,7 @@ This way the template fades in and out according to the transitions you set to t
 
 To place a animation template spot for `mySessionKey` do:
 
-    {{AnimationTemplate "mySessionKey"}}
+    {{AnimateTemplate "mySessionKey"}}
 
 To fade in the template from above at the position of the helper call
 
@@ -51,7 +49,7 @@ To fade out the template call
 
     Session.set('mySessionKey', false);
 
-@class template-AnimationTemplate
+@class template-animation-helper
 @constructor
 **/
 
@@ -64,7 +62,7 @@ Get the current template set in an `Session` key and place it inside the current
 @param {String} keyName    The `Session` key which holds a template
 @return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
 **/
-Handlebars.registerHelper('AnimationTemplate', function (keyName) {
+Handlebars.registerHelper('AnimateTemplate', function (keyName) {
     return Helpers.getTemplate('animationTemplate',{SessionKey: keyName});
 });
 
@@ -86,7 +84,7 @@ Template['animationTemplate'].created = function(){
 
 
 /**
-When the `animationTemplates` rerenders it checks if the `SessionKey` is set to a template or to FALSE
+When the `animateTemplates` rerenders it checks if the `SessionKey` is set to a template or to FALSE
 and animates it accordingly.
 
 @method rendered
@@ -94,7 +92,7 @@ and animates it accordingly.
 **/
 Template['animationTemplate'].rendered = function(){
     var template = this,
-        animationTemplate = Session.get(template.data.SessionKey),
+        animateTemplate = Session.get(template.data.SessionKey),
         $animateElement = $(template.findAll('.animate'));
 
 
@@ -108,7 +106,7 @@ Template['animationTemplate'].rendered = function(){
 
     Meteor.defer(function(){
         // remove the hidden template to start fade in animation
-        if(animationTemplate) {
+        if(animateTemplate) {
             $animateElement.removeClass('hidden');
         // if template was set to FALSE, add the hidden class, to trigger the hide animation
         } else {
@@ -123,32 +121,32 @@ Template['animationTemplate'].destroyed = function(){
 
 /**
 Waits for `SessionKey` to change and sets its brother `'_' + SessionKey` to render the keys template.
-This triggers the `animationTemplates` `rerendered` method to be called and animates the given template in or out.
+This triggers the `animateTemplates` `rerendered` method to be called and animates the given template in or out.
 
 @method reactiveAnimator
 @return undefined
 **/
 Template['animationTemplate'].reactiveAnimator = function(){
     var data = this,
-        animationTemplate = Session.get(data.SessionKey);
+        animateTemplate = Session.get(data.SessionKey);
 
     // clear previous timeouts, of last fades
     Meteor.clearTimeout(data.animationTimeout);
 
 
     // reloads the current template
-    if(animationTemplate === 'reload') {
-        var _animationTemplate = Session.store['_'+ data.SessionKey];
+    if(animateTemplate === 'reload') {
+        var _animateTemplate = Session.store['_'+ data.SessionKey];
 
         Session.set(data.SessionKey, false);
 
         Meteor.defer(function(){
-            Session.set(data.SessionKey, _animationTemplate);
+            Session.set(data.SessionKey, _animateTemplate);
         });
 
     // render and show the template
-    } else if(animationTemplate) {
-        Session.set('_'+ data.SessionKey, animationTemplate);
+    } else if(animateTemplate) {
+        Session.set('_'+ data.SessionKey, animateTemplate);
         Meteor.defer(function(){
             data.animationTimeout = 0;
         });
