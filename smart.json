@@ -3,7 +3,7 @@
   "description": "Allows to animate templates by adding a 'hidden' class with css transitions",
   "homepage": "https://github.com/frozeman/meteor-template-animation-helper",
   "author": "Fabian Vogelsteller (http://frozeman.de)",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "git": "https://github.com/frozeman/meteor-template-animation-helper.git",
   "packages": {}
 }

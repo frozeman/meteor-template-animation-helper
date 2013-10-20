@@ -38,7 +38,7 @@ This way the template fades in and out according to the transitions you set to t
         opacity: 0;
     }
 
-To place a animation template spot for `mySessionKey` do:
+Place a template animation helper for `mySessionKey` somewhere in your app:
 
     {{AnimateTemplate "mySessionKey"}}
 
