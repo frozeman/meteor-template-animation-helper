@@ -95,23 +95,24 @@ and animates it accordingly.
 Template['animationTemplate'].rendered = function(){
     var template = this,
         animationTemplate = Session.get(template.data.SessionKey),
-        $animateElement = $(template.find('.animate'));
+        $animateElement = $(template.findAll('.animate'));
+
 
     // set the current animating element, so its available in the helpers
     template.data.animationElement = $animateElement;
 
     // add the hidden class onlye when the template was hidden before
     if(template.data.animationTimeout === null)
-        $($animateElement).addClass('hidden');
+        $animateElement.addClass('hidden');
 
 
     Meteor.defer(function(){
         // remove the hidden template to start fade in animation
         if(animationTemplate) {
-            $($animateElement).removeClass('hidden');
+            $animateElement.removeClass('hidden');
         // if template was set to FALSE, add the hidden class, to trigger the hide animation
         } else {
-            $($animateElement).addClass('hidden');            
+            $animateElement.addClass('hidden');            
         }
     });
 };
@@ -158,12 +159,19 @@ Template['animationTemplate'].reactiveAnimator = function(){
         // if an animation element exists, get its transition-duration and remove the template after this.
         if(data.animationElement) {
             var $element = $(data.animationElement),
-                duration = $element.css('transition-duration');
+                duration = _.map($element, function(element){
+                    var values = $(element).css('transition-duration');
+
+                    if(_.isString(values))
+                        return values.split(',');
+                });
+
+            duration = _.flatten(duration);
 
             // get the highest duration in ms
-            if(_.isString(duration)) {
+            if(_.isArray(duration) && !_.isEmpty(duration)) {
 
-                duration = _.max(_.map(duration.split(','), function(item){
+                duration = _.max(_.map(duration, function(item){
                     var value = 0;
                     if(item.indexOf('ms') !== -1)
                         value = item.replace(/[ms| ]+/g ,'');
