@@ -96,7 +96,6 @@ Template['animationTemplate'].rendered = function(){
     var template = this,
         animationTemplate = Session.get(template.data.SessionKey),
         $animateElement = $(template.find('.animate'));
-console.log('DDDD');
 
     // set the current animating element, so its available in the helpers
     template.data.animationElement = $animateElement;
