@@ -1,0 +1,194 @@
+/**
+Template helpers
+
+@module Templates
+**/
+
+
+/**
+The `animationTemplate` template helpers
+
+This helper template makes it possible to animate templates.
+Use the `{{AnimationTemplate}}` helper and pass it a `Layout` key name like {{AnimationTemplate "myKey"}}.
+Then use the `Layout.set('keyName', 'templateName')` to render a template at the position of the `{{AnimationTemplate}}` helper.
+
+You can also call `Layout.set('keyName', 'reload')` to reload the current template, which will call the `destroyed` and `created` method of this template again.
+
+Additional you have to add a `animate` class to an element inside your template, which you want to animate.
+The AnimationTemplate will then add and remove a `hidden` class to show the template.
+And re-add the `hidden` class before removing the template.
+This way the template fades in and out according to the transitions you set to the `hidden` class of that element.
+
+**An example template could look like this:**
+
+    // HTML
+
+    <template name="myTemplate">
+        <div class="animate myTemplate">
+            ...
+        </div>
+    </template>
+
+    // CSS
+
+    .myTemplate {
+        opacity: 1:
+        transition: opacity 2s;
+    }
+    .myTemplate.hidden {
+        opacity: 0;
+    }
+
+To place a animation template spot for `myLayoutKey` do:
+
+    {{AnimationTemplate "myLayoutKey"}}
+
+To fade in the template from above at the position of the helper call
+
+    Layout.set('myLayoutKey', 'myTemplate');
+
+To fade out the template call
+
+    Layout.set('myLayoutKey', false);
+
+@class template-AnimationTemplate
+@constructor
+**/
+
+
+/**
+Get the current template set in an `Layout` key and place it inside the current template.
+
+
+@method Layout
+@param {String} keyName    The `Layout` key which holds a template
+@return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
+**/
+Handlebars.registerHelper('AnimationTemplate', function (keyName) {
+    return Helpers.getTemplate('animationTemplate',{LayoutKey: keyName});
+});
+
+
+
+/**
+Creates the `animationTimeout` data property,
+which will be used to store the timeOut ID of the fade out animation duration.
+
+@method created
+@return undefined
+**/
+Template['animationTemplate'].created = function(){
+    var template = this;
+
+    // set an animation timeout, used the by the timeout in the reactiveAnimator helper function.
+    template.data.animationTimeout = null;
+};
+
+
+/**
+When the `animationTemplates` rerenders it checks if the `LayoutKey` is set to a template or to FALSE
+and animates it accordingly.
+
+@method rendered
+@return undefined
+**/
+Template['animationTemplate'].rendered = function(){
+    var template = this,
+        animationTemplate = Layout.get(template.data.LayoutKey),
+        $animateElement = $(template.find('.animate'));
+console.log('DDDD');
+
+    // set the current animating element, so its available in the helpers
+    template.data.animationElement = $animateElement;
+
+    // add the hidden class onlye when the template was hidden before
+    if(template.data.animationTimeout === null)
+        $($animateElement).addClass('hidden');
+
+
+    Meteor.defer(function(){
+        // remove the hidden template to start fade in animation
+        if(animationTemplate) {
+            $($animateElement).removeClass('hidden');
+        // if template was set to FALSE, add the hidden class, to trigger the hide animation
+        } else {
+            $($animateElement).addClass('hidden');            
+        }
+    });
+};
+
+Template['animationTemplate'].destroyed = function(){ 
+};
+
+
+/**
+Waits for `LayoutKey` to change and sets its brother `'_' + LayoutKey` to render the keys template.
+This triggers the `animationTemplates` `rerendered` method to be called and animates the given template in or out.
+
+@method reactiveAnimator
+@return undefined
+**/
+Template['animationTemplate'].reactiveAnimator = function(){
+    var data = this,
+        animationTemplate = Layout.get(data.LayoutKey);
+
+    // clear previous timeouts, of last fades
+    Meteor.clearTimeout(data.animationTimeout);
+
+
+    // reloads the current template
+    if(animationTemplate === 'reload') {
+        var _animationTemplate = Layout.store['_'+ data.LayoutKey];
+
+        Layout.set(data.LayoutKey, false);
+
+        Meteor.defer(function(){
+            Layout.set(data.LayoutKey, _animationTemplate);
+        });
+
+    // render and show the template
+    } else if(animationTemplate) {
+        Layout.set('_'+ data.LayoutKey, animationTemplate);
+        Meteor.defer(function(){
+            data.animationTimeout = 0;
+        });
+
+    // hide and the unrender the template
+    } else {
+
+        // if an animation element exists, get its transition-duration and remove the template after this.
+        if(data.animationElement) {
+            var $element = $(data.animationElement),
+                duration = $element.css('transition-duration');
+
+            // get the highest duration in ms
+            if(_.isString(duration)) {
+
+                duration = _.max(_.map(duration.split(','), function(item){
+                    if(item.indexOf('ms') !== -1)
+                        return parseInt(item.replace(/[ms| ]+/g ,''));
+                    else
+                        return parseInt(item.replace(/[s| ]+/g ,'')) * 1000;
+                }))
+            } else
+                duration = 0;
+            
+            data.animationTimeout = Meteor.setTimeout(function(){
+                Layout.set('_'+ data.LayoutKey, false);
+                data.animationTimeout = null;
+            }, duration);
+        }
+    }
+
+};
+
+
+/**
+Shows the template to animate. This gets the template from `'_' + LayoutKey` set by the `reactiveAnimator` helper.
+
+@method template
+@return {Object} the current template
+**/
+Template['animationTemplate'].template = function(){
+    return Helpers.getTemplate(Layout.get('_'+ this.LayoutKey));
+};
