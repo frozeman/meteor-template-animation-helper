@@ -3,7 +3,7 @@
   "description": "Allows to animate/fade templates in and out",
   "homepage": "https://github.com/frozeman/animation-template",
   "author": "Fabian Vogelsteller (http://frozeman.de)",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "git": "https://github.com/frozeman/animation-template.git",
   "packages": {}
 }

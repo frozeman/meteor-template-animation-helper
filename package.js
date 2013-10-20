@@ -7,6 +7,7 @@ Package.on_use(function (api) {
     api.use('underscore', 'client');
     api.use('handlebars', 'client');
     api.use('templating', 'client');
+    api.use('jquery', 'client');
 
 
     // EXPORT

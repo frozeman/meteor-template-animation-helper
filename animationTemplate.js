@@ -164,10 +164,13 @@ Template['animationTemplate'].reactiveAnimator = function(){
             if(_.isString(duration)) {
 
                 duration = _.max(_.map(duration.split(','), function(item){
+                    var value = 0;
                     if(item.indexOf('ms') !== -1)
-                        return parseInt(item.replace(/[ms| ]+/g ,''));
+                        value = item.replace(/[ms| ]+/g ,'');
                     else
-                        return parseInt(item.replace(/[s| ]+/g ,'')) * 1000;
+                        value = item.replace(/[s| ]+/g ,'') * 1000;
+
+                    return parseInt(value);
                 }))
             } else
                 duration = 0;
