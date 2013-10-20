@@ -1,7 +1,7 @@
 Installtion
 -----------
 
-    $ mrt add animate-helper
+    $ mrt add template-animation-helper
 
 Usage
 -----
