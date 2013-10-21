@@ -49,17 +49,17 @@ When using the [view-manager][1] package along with this one, you can also pass 
         opacity: 0;
     }
 
-To place a animation template spot for `myLayoutKey` do:
+To place a animation template spot for `mySessionKey` do:
 
-    {{AnimateTemplate "myLayoutKey"}}
+    {{AnimateTemplate "mySessionKey"}}
 
 To fade in the template from above at the position of the helper call
 
-    Session/View.set('myLayoutKey', 'myTemplate');
+    Session/View.set('mySessionKey', 'myTemplate');
 
 To fade out the template call
 
-    Session/View.set('myLayoutKey', false);
+    Session/View.set('mySessionKey', false);
 
 Additional you can call
 
