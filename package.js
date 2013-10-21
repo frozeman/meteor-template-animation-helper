@@ -10,7 +10,7 @@ Package.on_use(function (api) {
     api.use('jquery', 'client');
 
     // thirdparty
-    api.use('view-manager', 'client');
+    api.use('view-manager', 'client', {weak: true});
 
     // EXPORT
     api.export('Template');

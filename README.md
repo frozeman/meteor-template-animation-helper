@@ -6,8 +6,6 @@ Installation
 Usage
 -----
 
-**Note: as of some bug in weak dependecies, this package requires the [view-manager][1]. Remove the view manager package from the package.js, if you only want to use `Session` instead.**
-
 This helper template makes it possible to animate templates.
 Use the `{{AnimateTemplate}}` helper and pass it a `Layout` key name like {{AnimateTemplate "myKey"}}.
 Then use the `Session/View.set('keyName', 'templateName')` to render a template at the position of the `{{AnimateTemplate}}` helper.

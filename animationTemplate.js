@@ -5,7 +5,8 @@ Template helpers
 **/
 
 // use the view-manager package or Session
-var Layout = (typeof View !== 'undefined') ? View : Session;
+var Layout = (Package['view-manager']) ? Package['view-manager'].View : Session;
+
 
 /**
 The reactive View class is used to set and get the views of the app.
