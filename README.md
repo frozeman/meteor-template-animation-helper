@@ -6,7 +6,7 @@ Installation
 Usage
 -----
 
-Note: as of some bug in weak dependecies, this package requires the view-manager[1]. Remove the view manager package from the package.js, if you only want to use `Session` instead.
+Note: as of some bug in weak dependecies, this package requires the [view-manager][1]. Remove the view manager package from the package.js, if you only want to use `Session` instead.
 
 [1]: https://atmosphere.meteor.com/package/view-manager
 
