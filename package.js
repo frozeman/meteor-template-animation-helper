@@ -3,12 +3,14 @@ Package.describe({
 });
 
 Package.on_use(function (api) {
-    api.use('session', 'client');
     api.use('underscore', 'client');
     api.use('handlebars', 'client');
     api.use('templating', 'client');
+    api.use('session', 'client');
     api.use('jquery', 'client');
 
+    // thirdparty
+    api.use('view-manager', 'client');
 
     // EXPORT
     api.export('Template');

@@ -1,4 +1,4 @@
-Installtion
+Installation
 -----------
 
     $ mrt add template-animation-helper
@@ -6,12 +6,13 @@ Installtion
 Usage
 -----
 
+Note: as of some bug in weak dependecies, this package requires the view-manager[1]. Remove the view manager package from the package.js, if you only want to use `Session` instead.
+
+[1]: https://atmosphere.meteor.com/package/view-manager
 
 This helper template makes it possible to animate templates.
-Use the `{{AnimateTemplate}}` helper and pass it a `Session` key name like {{AnimateTemplate "myKey"}}.
-Then use the `Session.set('keyName', 'templateName')` to render a template at the position of the `{{AnimateTemplate}}` helper.
-
-You can also call `Session.set('keyName', 'reload')` to reload the current template, which will call the `destroyed` and `created` method of this template again.
+Use the `{{AnimateTemplate}}` helper and pass it a `Layout` key name like {{AnimateTemplate "myKey"}}.
+Then use the `Layout.set('keyName', 'templateName')` to render a template at the position of the `{{AnimateTemplate}}` helper.
 
 Additional you have to add a `animate` class to an element inside your template, which you want to animate.
 The AnimateTemplate will then add and remove a `hidden` class to show the template.
@@ -38,17 +39,17 @@ This way the template fades in and out according to the transitions you set to t
         opacity: 0;
     }
 
-Place a template animation helper for `mySessionKey` somewhere in your app:
+To place a animation template spot for `myLayoutKey` do:
 
-    {{AnimateTemplate "mySessionKey"}}
+    {{AnimateTemplate "myLayoutKey"}}
 
 To fade in the template from above at the position of the helper call
 
-    Session.set('mySessionKey', 'myTemplate');
+    Layout.set('myLayoutKey', 'myTemplate');
 
 To fade out the template call
 
-    Session.set('mySessionKey', false);
+    Layout.set('myLayoutKey', false);
 
 Additional you can call
 
