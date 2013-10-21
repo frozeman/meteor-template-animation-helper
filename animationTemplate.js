@@ -85,15 +85,15 @@ Place a template animation helper for `mySessionKey` somewhere in your app:
 
 To fade in the template from above at the position of the helper call
 
-    Layout.set('mySessionKey', 'myTemplate');
+    View/Session.set('mySessionKey', 'myTemplate');
 
 To fade out the template call
 
-    Layout.set('mySessionKey', false);
+    View/Session.set('mySessionKey', false);
 
 Additional you can call
 
-    Session.set('mySessionKey', 'reload');
+    View/Session.set('mySessionKey', 'reload');
 
 To reload the last template. This will call the destroyed and created method of that template again.
 
