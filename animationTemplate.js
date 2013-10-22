@@ -103,7 +103,7 @@ To reload the last template. This will call the destroyed and created method of 
 
 
 /**
-Creates the `animationTimeout` data property,
+Callback: Creates the `animationTimeout` data property,
 which will be used to store the timeOut ID of the fade out animation duration.
 
 @method created
@@ -118,7 +118,7 @@ Template['template-animation-helper'].created = function(){
 
 
 /**
-When the `animateTemplates` rerenders it checks if the `SessionKey` is set to a template or to FALSE
+Callback: When the `animateTemplates` rerenders it checks if the `SessionKey` is set to a template or to FALSE
 and animates it accordingly.
 
 @method rendered
@@ -149,12 +149,9 @@ Template['template-animation-helper'].rendered = function(){
     });
 };
 
-Template['template-animation-helper'].destroyed = function(){
-};
-
 
 /**
-Waits for `SessionKey` to change and sets its brother `'_' + SessionKey` to render the keys template.
+Helper: Waits for `SessionKey` to change and sets its brother `'_' + SessionKey` to render the keys template.
 This triggers the `animateTemplates` `rerendered` method to be called and animates the given template in or out.
 
 @method reactiveAnimator
@@ -226,7 +223,7 @@ Template['template-animation-helper'].reactiveAnimator = function(){
 
 
 /**
-Shows the template to animate. This gets the template from `'_' + SessionKey` set by the `reactiveAnimator` helper.
+Helper: Shows the template to animate. This gets the template from `'_' + SessionKey` set by the `reactiveAnimator` helper.
 
 @method template
 @return {Object} the current template
