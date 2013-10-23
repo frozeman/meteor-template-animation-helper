@@ -62,7 +62,7 @@ To reload the last template. This will call the destroyed and created method of 
 
 You can also pass a template name to this helper, this will render the template in place,
 switching a `hidden` class on the element(s) with the class `animate`.
-Additionally the data context of this template gets the `_templateAnimationKey`., so you can fade out the this template manually.
+Additionally the data context of this template gets the `_templateAnimationKey`, so you can manually fade the template out.
 To do that call the following inside a helper or event of that template:
 
     View/Session.set(this._templateAnimationKey, false);
