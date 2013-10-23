@@ -7,27 +7,19 @@ Usage
 -----
 
 This helper template makes it possible to animate templates.
-Use the `{{AnimateTemplate}}` helper and pass it a `Layout` key name like {{AnimateTemplate "myKey"}}.
-Then use the `Session/View.set('keyName', 'templateName')` to render a template at the position of the `{{AnimateTemplate}}` helper.
 
-Additional you have to add a `animate` class to an element inside your template, which you want to animate.
-The AnimateTemplate will then add and remove a `hidden` class to show the template.
-And re-add the `hidden` class before removing the template.
-This way the template fades in and out according to the transitions you set to the `hidden` class of that element.
-
-When using the [view-manager][1] package along with this one, you can also pass an object to set to give the template some data context:
-
-    View.set('keyName', {
-            template: 'templateName',
-            data: {
-                ...
-            }
-        })
+It can either use `Session`, or the `View` class of the [view-manager][1] package (if available).
 
 [1]: https://atmosphere.meteor.com/package/view-manager
 
+Use the `{{AnimateTemplate}}` helper and pass it a `Session` or `View` key name like {{AnimateTemplate "myKey"}}.
+Then use the `Session/View.set('keyName', 'templateName')` to render a template at the position of the `{{AnimateTemplate}}` helper.
 
-**An example template could look like this:**
+Additional you have to add a `animate` class to element(s) inside your template, which you want to animate.
+This element will then switch a `hidden` class to show/fadein the template and re-add the `hidden` class before removing the template.
+This way the template fades in and out according to the transitions you set to the `hidden` class of that element.
+
+**An example of dynaimcally showing/removing a template**
 
     // HTML
 
@@ -39,28 +31,38 @@ When using the [view-manager][1] package along with this one, you can also pass 
 
     // CSS
 
-    .animate {
+    .myTemplate {
         opacity: 1:
         transition: opacity 2s;
     }
-    .animate.hidden {
+    .myTemplate.hidden {
         opacity: 0;
     }
 
-To place a animation template spot for `mySessionKey` do:
+Place a template animation helper for `mytemplateKey` somewhere in your app:
 
-    {{AnimateTemplate "mySessionKey"}}
+    {{AnimateTemplate "mytemplateKey"}}
 
 To fade in the template from above at the position of the helper call
 
-    Session/View.set('mySessionKey', 'myTemplate');
+    View/Session.set('mytemplateKey', 'myTemplate');
 
 To fade out the template call
 
-    Session/View.set('mySessionKey', false);
+    View/Session.set('mytemplateKey', false);
 
 Additional you can call
 
-    Session/View.set('mySessionKey', 'reload');
+    View/Session.set('mytemplateKey', 'reload');
 
 To reload the last template. This will call the destroyed and created method of that template again.
+
+
+**Passing a template name to the {{AnimateTemplate}} helper**
+
+You can also pass a template name to this helper, this will render the template in place,
+switching a `hidden` class on the element(s) with the class `animate`.
+Additionally the data context of this template gets the `_templateAnimationKey`., so you can fade out the this template manually.
+To do that call the following inside a helper or event of that template:
+
+    View/Session.set(this._templateAnimationKey, false);
