@@ -7,23 +7,44 @@ Template helpers
 // use the view-manager package or Session
 var Layout = (Package['view-manager']) ? Package['view-manager'].View : Session;
 
+// wrapper methods
+var Wrapper = {};
+Wrapper.isTemplate = function(templateName){
+    return (Package['view-manager'])
+        ? Package['view-manager'].View.isTemplate(templateName)
+        : Template[templateName];
+};
+Wrapper.getTemplate = function(templateName, data){
+    return (Package['view-manager'])
+        ? Package['view-manager'].View.getTemplate(templateName, data)
+        : Template[templateName](data);
+};
+Wrapper.getTemplateName = function(templateName){
+    return (Package['view-manager'])
+        ? Package['view-manager'].View.getTemplateName(templateName)
+        : templateName;
+};
+
 
 /**
-The reactive View class is used to set and get the views of the app.
+Contains methods and helpers for animating templates.
 
-Be aware that they can only be used inside a handlebars template like:
-
-    <div>
-        {{myHelper}}
-    <div>
-
-@class template-animation-helper-Handlebars-helpers
+@class template-animation-helper
 @static
 **/
 
 
 /**
 Get the current template set in an `Session` or `View` key and place it inside the current template.
+
+**Example usage**
+
+    Template.myTemplate.myhelper = function(){
+        return AnimateTemplate('myTemplateKeyOrName');
+    };
+
+    // Then you can render the template by calling
+    View/Session.set('myTemplateKey','templateName');
 
 You can also pass a template name to this helper, this will render the template in place,
 switching a `hidden` class on the element(s) with the class `animate`.
@@ -34,77 +55,98 @@ To do that call the following inside a helper or event of that template:
 
 
 @method AnimateTemplate
-@param {String} keyName    The `Session` key which holds a template, can also be a template name.
+@param {String} keyName                 The `Session` key which holds a template, can also be a template name.
+@param {Boolean} animateOnRerender      When TRUE, it will animate on all rerenders, otherwise only on the first, when the template is created.
 @return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
 **/
-Handlebars.registerHelper('AnimateTemplate', function (keyName) {
+AnimateTemplate = function(keyName, animateOnRerender){
     var templateObject = {},
+        uniqueKeyName,
         data = (this instanceof Window) ? {} : this;
 
-    // use view-manager package
-    if(typeof View !== 'undefined') {
+    animateOnRerender = (_.isBoolean(animateOnRerender)) ? animateOnRerender : false;
+
+    if(Template['template-animation-helper']) {
 
         // transform when given a template into a View key
-        if(View.isTemplate(keyName)) {
+        if(Wrapper.isTemplate(keyName)) {
 
-            templateObject.template = View.getTemplateName(keyName);
-            keyName = templateObject.template + _.uniqueId('_templateKey_');
+            uniqueKeyName = Wrapper.getTemplateName(keyName) + _.uniqueId('_templateKey_');
 
-            // extend the current data context and add the template key
-            templateObject.data = _.extend(data, {
-                _templateAnimationKey: keyName
-            });
+            templateObject = {
+                template: Wrapper.getTemplateName(keyName),
+                // extend the current data context and add the template key
+                data: _.extend(data, {
+                    _templateAnimationKey: uniqueKeyName
+                // add the given data
+                },keyName.data || {})
+            };
 
-            Meteor.defer(function(){
-                View.set(keyName, templateObject);
-            });
-        }
-
-        return View.getTemplate('template-animation-helper',{templateKey: keyName});
-
-    // use Session
-    } else if(Template['template-animation-helper']) {
-
-        // transform when given a template into a Session key
-        if(Template[keyName]) {
-
-            templateObject.template = keyName;
-            keyName = templateObject.template + _.uniqueId('_templateKey_');
-
-            // extend the current data context and add the template key
-            templateObject.data = _.extend(data, {
-                _templateAnimationKey: keyName
-            });
 
             Meteor.defer(function(){
-                Session.set(keyName, templateObject);
+                Layout.set(uniqueKeyName, templateObject);
             });
-        }
+        } else
+            uniqueKeyName = keyName;
 
-        return Template['template-animation-helper']({templateKey: keyName});
+        return Wrapper.getTemplate('template-animation-helper',{
+            templateKey: uniqueKeyName,
+            animateOnRerender: animateOnRerender
+        });
+
+
     } else {
         return '';
     }
-});
+};
+
+/**
+Helper: **See the `AnimateTemplate` method for details.**
+
+**Example usage**
+
+    {{AnimateTemplate "myTemplateKeyOrName"}}
+
+    // Then you can render the template by calling
+    View/Session.set('myTemplateKey','templateName');
 
 
+@method ((AnimateTemplate))
+@param {String} keyName                 The `Session` key which holds a template, can also be a template name.
+@param {Boolean} animateOnRerender      When TRUE, it will animate on all rerenders, otherwise only on the first, when the template is created.
+@return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
+**/
+Handlebars.registerHelper('AnimateTemplate', AnimateTemplate);
 
 
 /**
 This helper template makes it possible to animate templates.
 
-It can either use `Session`, or the `View` class of the [view-manager][1] package (if available).
+What it basically does: It adds a `hidden` class to each element with the class `animate` when the template gets created
+and removes this `hidden` class immediately so that an animation caused by the `hidden` class can happen.
+When the template then gets removed, by setting its templateKey inside the Session or View object to false, it re-adds the `hidden` class.
+Waits until the animation caused by it happened and removes then the template.
+
+
+You can either use `Session`, or the `View` class of the [view-manager][1] package.
+By default it uses `Session` to render templates at the position of the `{{AnimateHelper}}` helper,
+but when the [view-manager][1] package is available it uses the `View` class.
 
 [1]: https://atmosphere.meteor.com/package/view-manager
 
-Use the `{{AnimateTemplate}}` helper and pass it a `Session` or `View` key name like {{AnimateTemplate "myKey"}}.
+Use the `{{AnimateTemplate}}` helper or `AnimateTemplate` method and pass it a `Session` or `View` key name like {{AnimateTemplate "myKey"}}.
 Then use the `Session/View.set('keyName', 'templateName')` to render a template at the position of the `{{AnimateTemplate}}` helper.
 
 Additional you have to add a `animate` class to element(s) inside your template, which you want to animate.
 This element will then switch a `hidden` class to show/fadein the template and re-add the `hidden` class before removing the template.
 This way the template fades in and out according to the transitions you set to the `hidden` class of that element.
 
-**An example of dynaimcally showing/removing a template**
+**The `AnimationTemplate` method and helper accepts a second parameter `animateOnRerender`**
+
+When the second parameter is TRUE, it will animate on all rerenders, otherwise only on the first, when the template is created.
+
+
+**An example of dynaimcally showing/removing a templates**
 
     // HTML
 
@@ -141,6 +183,16 @@ Additional you can call
     View/Session.set('mytemplateKey', 'reload');
 
 To reload the last template. This will call the destroyed and created method of that template again.
+
+
+**You can also return an AnimationTemplate from inside a helper**
+
+    Template.myTemplate.myhelper = function(){
+        return AnimateTemplate('myTemplateKeyOrName');
+    };
+
+    // Then you can render the template by calling
+    View/Session.set('myTemplateKey','templateName');
 
 
 **Passing a template name to the {{AnimateTemplate}} helper**
@@ -188,8 +240,8 @@ Template['template-animation-helper'].rendered = function(){
     // set the current animating element, so its available in the helpers
     template.data.animationElement = $animateElement;
 
-    // add the hidden class onlye when the template was hidden before
-    if(template.data.animationTimeout === null)
+    // add the hidden class only when the template was hidden before, or animateOnRerender is TRUE
+    if(template.data.animationTimeout === null || template.data.animateOnRerender)
         $animateElement.addClass('hidden');
 
 

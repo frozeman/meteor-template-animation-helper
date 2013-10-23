@@ -13,7 +13,7 @@ Package.on_use(function (api) {
     api.use('view-manager', 'client', {weak: true});
 
     // EXPORT
-    api.export('Template');
+    api.export('AnimateTemplate');
 
     // FILES
     api.add_files('animationTemplate.html', 'client');
