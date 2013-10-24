@@ -27,7 +27,7 @@ Additional you have to add a `animate` class to element(s) inside your template,
 This element will then switch a `hidden` class to show/fadein the template and re-add the `hidden` class before removing the template.
 This way the template fades in and out according to the transitions you set to the `hidden` class of that element.
 
-**The `AnimationTemplate` method and helper accepts a second parameter `animateOnRerender`**
+**The `AnimateTemplate` method and helper accepts a second parameter `animateOnRerender`**
 
 When the second parameter is TRUE, it will animate on all rerenders, otherwise only on the first, when the template is created.
 
@@ -71,7 +71,7 @@ Additional you can call
 To reload the last template. This will call the destroyed and created method of that template again.
 
 
-**You can also return an AnimationTemplate from inside a helper**
+**You can also return an AnimateTemplate from inside a helper**
 
     Template.myTemplate.myhelper = function(){
         return AnimateTemplate('myTemplateKeyOrName');
