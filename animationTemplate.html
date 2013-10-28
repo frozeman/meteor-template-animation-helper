@@ -1,9 +1,13 @@
 <template name="template-animation-helper">
-    {{#isolate}}
-        {{template}}
-    {{/isolate}}
 
-    {{#isolate}}
-        {{reactiveAnimator}}
-    {{/isolate}}
+    {{runAnimations}}
+
+    {{#if gotTemplate}}
+        {{> templateAnimationHelperWrapper}}
+    {{/if}}
+</template>
+
+
+<template name="templateAnimationHelperWrapper">
+    {{> placeTemplate}}
 </template>
