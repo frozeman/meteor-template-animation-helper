@@ -226,7 +226,7 @@ Template['template-animation-helper'].created = function(){
     var template = this;
 
     // set an animation timeout, used the by the timeout in the reactiveAnimator helper function.
-    template.data.animationTimeout = null;
+    template.data.animationTimeout;
     template.data.animationElements;
 };
 
@@ -269,7 +269,7 @@ Template['template-animation-helper'].runAnimations = function(test){
 
     // RELOADS the current template
     if(animateTemplate === 'reload') {
-        var _animateTemplate = Layout.store['_'+ data.templateKey];
+        var _animateTemplate = Layout.keys['_'+ data.templateKey];
 
         Layout.set(data.templateKey, false);
 
@@ -279,52 +279,46 @@ Template['template-animation-helper'].runAnimations = function(test){
 
     // SHOW the template
     } else if(animateTemplate) {
-        Layout.set('_'+ data.templateKey, animateTemplate);
 
-        // the rendered callback of the "templateAnimationHelperWrapper" template
-        // stores and animates in the elements with the class animate
+        // check if there is not already a template rendered, or the template name hasn't changed
+        if(!Layout.keys['_'+ data.templateKey] ||
+           Wrapper.getTemplateName(data.templateKey) === Wrapper.getTemplateName('_'+ data.templateKey)) {
 
-    // HIDE and the unrender the template
-    } else {
+            Layout.set('_'+ data.templateKey, animateTemplate);
 
-        // if an animation element exists, get its transition-duration and remove the template after this.
-        if(data.animationElements) {
-            var $elements = data.animationElements,
-                duration = _.map($elements, function(element){
-                    var values = $(element).css('transition-duration');
-
-                    if(_.isString(values))
-                        return values.split(',');
-                });
-
-            duration = _.flatten(duration);
-
-            // get the highest duration in ms
-            if(_.isArray(duration) && !_.isEmpty(duration)) {
-
-                duration = _.max(_.map(duration, function(item){
-                    if(_.isString(item)) {
-                        var value = 0;
-                        if(item.indexOf('ms') !== -1)
-                            value = item.replace(/[ms| ]+/g ,'');
-                        else
-                            value = item.replace(/[s| ]+/g ,'') * 1000;
-
-                        return parseInt(value);
-                    }
-                }))
-            } else
-                duration = 0;
+        // otherwise fade out the old template and set the new
+        } else if(data.animationElements) {
 
             // start to animate elements backwards
             $(data.animationElements).addClass('animate');
 
+            data.animationTimeout = Meteor.setTimeout(function(){
+                Layout.set('_'+ data.templateKey, false);
+                data.animationElements = null;
+
+                // set the new template
+                Meteor.setTimeout(function(){
+                    Layout.set('_'+ data.templateKey, animateTemplate);
+                }, 10);
+            }, getDuration(data.animationElements));
+        }
+
+
+
+    // HIDE and the unrender the template
+    } else {
+
+        // if an animation element exists,
+        // get its transition-duration and remove the template after this.
+        if(data.animationElements) {
+
+            // start to animate elements backwards
+            $(data.animationElements).addClass('animate');
 
             data.animationTimeout = Meteor.setTimeout(function(){
                 Layout.set('_'+ data.templateKey, false);
-                data.animationTimeout = null;
                 data.animationElements = null;
-            }, duration);
+            }, getDuration(data.animationElements));
         }
     }
 };
@@ -333,16 +327,58 @@ Template['template-animation-helper'].runAnimations = function(test){
 /**
 Helper: When a template was set, render the wrapper template to start animation.
 
-@method gotTemplate
+@method hasTemplate
 @return {Boolean} check if a new template was set
 **/
-Template['template-animation-helper'].gotTemplate = function(test){
-    if (Layout.get(this.templateKey))
+Template['template-animation-helper'].hasTemplate = function(test){
+
+    if(Layout.get(this.templateKey) && Layout.get('_'+ this.templateKey))
         return true;
     else if(!Layout.get(this.templateKey) && Layout.get('_'+ this.templateKey))
         return true;
     else
         return false;
+};
+
+
+// METHODs
+
+/**
+Returns the transition duration of the given element(s) in milliseconds.
+
+@method getDuration
+@private
+@return {Number} the duration in milliseconds
+**/
+var getDuration = function(animationElements){
+    var $elements = animationElements,
+        duration = _.flatten(_.map($elements, function(element){
+            var values = $(element).css('transition-duration');
+
+            if(_.isString(values))
+                return values.split(',');
+        }));
+
+    duration = _.flatten(duration);
+
+    // get the highest duration in ms
+    if(_.isArray(duration) && !_.isEmpty(duration)) {
+
+        duration = _.max(_.map(duration, function(item){
+            if(_.isString(item)) {
+                var value = 0;
+                if(item.indexOf('ms') !== -1)
+                    value = item.replace(/[ms| ]+/g ,'');
+                else
+                    value = item.replace(/[s| ]+/g ,'') * 1000;
+
+                return parseInt(value);
+            }
+        }))
+    } else
+        duration = 0;
+
+    return duration;
 };
 
 
@@ -367,10 +403,12 @@ Template['templateAnimationHelperWrapper'].rendered = function(){
     // store the to animate elements
     template.data.animationElements = this.findAll('.animate');
 
+    // console.log($(template.data.animationElements[0]).closest("html")[0]);
+
     // removes the animate class to start animation
-    Meteor.defer(function(){
+    Meteor.setTimeout(function(){
         $(template.data.animationElements).removeClass('animate');
-    });
+    }, 400);
 };
 
 
@@ -381,6 +419,7 @@ Helper: Shows the template to animate. This gets the template from `'_' + templa
 @return {Object} the current template
 **/
 Template['templateAnimationHelperWrapper'].placeTemplate = function(){
+
     // use the view-manager package method
     if(typeof View !== 'undefined')
         return View.getTemplate(Layout.get('_'+ this.templateKey));
