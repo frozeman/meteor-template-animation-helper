@@ -228,6 +228,7 @@ Template['template-animation-helper'].created = function(){
     // set an animation timeout, used the by the timeout in the reactiveAnimator helper function.
     template.data.animationTimeout;
     template.data.animationElements;
+    template.data.templateDataChanged = false;
 };
 
 
@@ -280,17 +281,27 @@ Template['template-animation-helper'].runAnimations = function(test){
     // SHOW the template
     } else if(animateTemplate) {
 
-        // check if there is not already a template rendered, or the template name hasn't changed
-        if(!Layout.keys['_'+ data.templateKey] ||
-           Wrapper.getTemplateName(data.templateKey) === Wrapper.getTemplateName('_'+ data.templateKey)) {
+        // console.log(!Layout.keys['_'+ data.templateKey],
+            // Wrapper.getTemplateName(Layout.keys[data.templateKey]), Wrapper.getTemplateName(Layout.keys['_'+ data.templateKey]));
+
+        // check if there is not already a template rendered
+        if(!Layout.keys['_'+ data.templateKey]) {
 
             Layout.set('_'+ data.templateKey, animateTemplate);
+
+        // check if the template name hasn't changed
+        } else if(Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(Layout.keys['_'+ data.templateKey])) {
+
+            this.templateDataChanged = true;
+            Layout.set('_'+ data.templateKey, animateTemplate);
+
 
         // otherwise fade out the old template and set the new
         } else if(data.animationElements) {
 
             // start to animate elements backwards
             $(data.animationElements).addClass('animate');
+
 
             data.animationTimeout = Meteor.setTimeout(function(){
                 Layout.set('_'+ data.templateKey, false);
@@ -341,6 +352,63 @@ Template['template-animation-helper'].hasTemplate = function(test){
 };
 
 
+/**
+Helper: Adds the template and animates it by removing the `animate` class(es).
+This gets the template from `'_' + templateKey` set by the `reactiveAnimator` helper.
+
+This helper hijacks the `rendered` callback of the template to remove the `animate` class(es).
+
+@method placeTemplate
+@return {Object} the current template
+**/
+Template['template-animation-helper'].placeTemplate = function(){
+    var _this = this,
+        animateTemplate = Layout.get('_'+ this.templateKey),
+        instance = '',
+        templateDataChanged = this.templateDataChanged;
+
+    // reset this.templateDataChanged
+    this.templateDataChanged = false;
+
+    // use the view-manager package method
+    if(typeof View !== 'undefined') {
+        instance = View.getTemplate(animateTemplate);
+
+    // just return a template
+    } else if(Template[animateTemplate]) {
+        instance = Template[animateTemplate];
+    }
+
+    // OVERWRITE the RENDERED FUNCTION of the template, to remove the animate classes
+    if(instance.guid) {
+        // HIJACK the rendered callback
+        instance.rendered = (function(rendered) {
+            function extendsRendered() {
+
+                // call the original rendered callback
+                if(rendered)
+                    rendered.call(this);
+
+                // remove the animate class immediatelly,
+                // and store the elements to the outer animateTemplate instance
+                _this.animationElements = this.findAll('.animate');
+
+                if(templateDataChanged)
+                    $(_this.animationElements).removeClass('animate');
+                else {
+                    Meteor.defer(function(){
+                        $(_this.animationElements).removeClass('animate');
+                    });
+                }
+            }
+            return extendsRendered;
+        })(instance.rendered);
+    }
+
+    return instance;
+};
+
+
 // METHODs
 
 /**
@@ -379,54 +447,4 @@ var getDuration = function(animationElements){
         duration = 0;
 
     return duration;
-};
-
-
-
-/**
-The block helper template ro cause the rerendering.
-
-@class template-animation-helper-wrapper
-@constructor
-**/
-
-
-/**
-Callback: When a template is set it will add and remove the hidden class, to cause the animation effect.
-
-@method rendered
-@return undefined
-**/
-Template['templateAnimationHelperWrapper'].rendered = function(){
-    var template = this;
-
-    // store the to animate elements
-    template.data.animationElements = this.findAll('.animate');
-
-    // console.log($(template.data.animationElements[0]).closest("html")[0]);
-
-    // removes the animate class to start animation
-    Meteor.setTimeout(function(){
-        $(template.data.animationElements).removeClass('animate');
-    }, 400);
-};
-
-
-/**
-Helper: Shows the template to animate. This gets the template from `'_' + templateKey` set by the `reactiveAnimator` helper.
-
-@method placeTemplate
-@return {Object} the current template
-**/
-Template['templateAnimationHelperWrapper'].placeTemplate = function(){
-
-    // use the view-manager package method
-    if(typeof View !== 'undefined')
-        return View.getTemplate(Layout.get('_'+ this.templateKey));
-    // just return a template
-    else if(Template[Layout.get('_'+ this.templateKey)]) {
-        return Template[Layout.get('_'+ this.templateKey)];
-    } else {
-        return '';
-    }
 };
