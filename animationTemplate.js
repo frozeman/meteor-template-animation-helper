@@ -57,11 +57,13 @@ To do that call the following inside a helper or event of that template:
 
 @method AnimateTemplate
 @param {String} keyName                 The `Session` key which holds a template, can also be a template name.
+@param {Number} delay                   The delay used before removing the`animate` class
 @return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
 **/
-AnimateTemplate = function(keyName){
+AnimateTemplate = function(keyName, delay){
     var templateObject = {},
         uniqueKeyName,
+        delay = delay || 0,
         data = (this instanceof Window) ? {} : this;
 
 
@@ -76,7 +78,8 @@ AnimateTemplate = function(keyName){
                 template: Wrapper.getTemplateName(keyName),
                 // extend the current data context and add the template key
                 data: _.extend(data, {
-                    _templateAnimationKey: uniqueKeyName
+                    _templateAnimationKey: uniqueKeyName,
+                    _delay: delay
                 // add the given data
                 },keyName.data || {})
             };
@@ -89,7 +92,8 @@ AnimateTemplate = function(keyName){
             uniqueKeyName = keyName;
 
         return Wrapper.getTemplate('template-animation-helper',{
-            templateKey: uniqueKeyName
+            templateKey: uniqueKeyName,
+            _delay: delay
         });
 
 
@@ -215,6 +219,7 @@ Passing a template name also applies when using the `AnimateTemplate` function i
 **/
 
 
+
 /**
 Callback: Creates the `animationTimeout` data property,
 which will be used to store the timeOut ID of the fade out animation duration.
@@ -262,7 +267,6 @@ This triggers the `templateAnimationHelperWrapper` `rendered` method to be calle
 Template['template-animation-helper'].runAnimations = function(test){
     var data = this,
         animateTemplate = Layout.get(data.templateKey);
-
 
     // clear previous timeouts, of last fades
     Meteor.clearTimeout(data.animationTimeout);
@@ -396,9 +400,9 @@ Template['template-animation-helper'].placeTemplate = function(){
                 if(templateDataChanged)
                     $(_this.animationElements).removeClass('animate');
                 else {
-                    Meteor.defer(function(){
+                    Meteor.setTimeout(function(){
                         $(_this.animationElements).removeClass('animate');
-                    });
+                    }, _this._delay);
                 }
             }
             return extendsRendered;
