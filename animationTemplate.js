@@ -296,8 +296,7 @@ Template['template-animation-helper'].runAnimations = function(test){
             Layout.set('_'+ data.templateKey, animateTemplate);
 
         // check if the template name hasn't changed
-        } else if((_.isString(Layout.keys['_'+ data.templateKey]) && Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(EJSON.parse(Layout.keys['_'+ data.templateKey]))) ||
-                  (_.isObject(Layout.keys['_'+ data.templateKey]) && Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(Layout.keys['_'+ data.templateKey]))) {
+        } else if(Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(Layout.keys['_'+ data.templateKey])) {
 
             this.templateDataChanged = true;
             Layout.set('_'+ data.templateKey, animateTemplate);
