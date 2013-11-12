@@ -72,6 +72,7 @@ AnimateTemplate = function(keyName, delay){
         // transform when given a template into a View key
         if(Wrapper.isTemplate(keyName)) {
 
+
             uniqueKeyName = Wrapper.getTemplateName(keyName) + _.uniqueId('_templateKey_');
 
             templateObject = {
@@ -287,6 +288,7 @@ Template['template-animation-helper'].runAnimations = function(test){
 
         // console.log(!Layout.keys['_'+ data.templateKey],
             // Wrapper.getTemplateName(Layout.keys[data.templateKey]), Wrapper.getTemplateName(Layout.keys['_'+ data.templateKey]));
+            // console.log(animateTemplate, Layout.keys['_'+ data.templateKey]);
 
         // check if there is not already a template rendered
         if(!Layout.keys['_'+ data.templateKey]) {
@@ -294,7 +296,8 @@ Template['template-animation-helper'].runAnimations = function(test){
             Layout.set('_'+ data.templateKey, animateTemplate);
 
         // check if the template name hasn't changed
-        } else if(Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(Layout.keys['_'+ data.templateKey])) {
+        } else if((_.isString(Layout.keys['_'+ data.templateKey]) && Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(EJSON.parse(Layout.keys['_'+ data.templateKey]))) ||
+                  (_.isObject(Layout.keys['_'+ data.templateKey]) && Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(Layout.keys['_'+ data.templateKey]))) {
 
             this.templateDataChanged = true;
             Layout.set('_'+ data.templateKey, animateTemplate);
@@ -346,7 +349,6 @@ Helper: When a template was set, render the wrapper template to start animation.
 @return {Boolean} check if a new template was set
 **/
 Template['template-animation-helper'].hasTemplate = function(test){
-
     if(Layout.get(this.templateKey) && Layout.get('_'+ this.templateKey))
         return true;
     else if(!Layout.get(this.templateKey) && Layout.get('_'+ this.templateKey))
@@ -374,13 +376,9 @@ Template['template-animation-helper'].placeTemplate = function(){
     // reset this.templateDataChanged
     this.templateDataChanged = false;
 
-    // use the view-manager package method
-    if(typeof View !== 'undefined') {
-        instance = View.getTemplate(animateTemplate);
 
-    // just return a template
-    } else if(Template[animateTemplate]) {
-        instance = Template[animateTemplate];
+    if(Wrapper.isTemplate(animateTemplate)) {
+        instance = Wrapper.getTemplate(animateTemplate);
     }
 
     // OVERWRITE the RENDERED FUNCTION of the template, to remove the animate classes
