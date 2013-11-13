@@ -77,6 +77,7 @@ AnimateTemplate = function(values){
             _delay: values.delay
         });
 
+
     return Wrapper.getTemplate('template-animation-helper', data);
 };;
 
@@ -112,8 +113,41 @@ Helper: **See the `AnimateTemplate` method for details.**
 
 @return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
 **/
-Handlebars.registerHelper('Animate', AnimateTemplate);
+Handlebars.registerHelper('AnimateTemplate', AnimateTemplate);
 
+
+
+
+/**
+{{#Animate}} block helper, which will remove any `animate` class from its child elements when rendered.
+Additionally you can provide an `delay` parameter to set a delay (in ms) for the animation to start.
+
+    {{#Animate delay=200}}
+        <div class="animate">
+            animates this content here
+            (you must provide some css transitions for the animate class)
+        </div>
+    {{/Animate}}
+
+@class Animate
+@constructor
+**/
+
+/**
+Callback: When the `animateTemplates` rerenders it checks if the `templateKey` is set to a template or to FALSE
+and animates it accordingly.
+
+@method rendered
+@return undefined
+**/
+Template['Animate'].rendered = function(){
+    var _this = this
+        delay = this.__component__.delay || 1;
+
+    Meteor.setTimeout(function(){
+        $(_this.findAll('.animate')).removeClass('animate');
+    }, delay);
+};
 
 
 
@@ -234,6 +268,7 @@ Template['template-animation-helper'].created = function(){
     this.data._animationTimeout;
     this.data._animationElements;
     this.data._templateDataChanged = false;
+
 };
 
 
@@ -254,11 +289,6 @@ Template['template-animation-helper'].rendered = function(){
         $(_this.data._animationElements).removeClass('animate');
     }, delay);
 };
-
-
-// Template['AnimateTemplate'].placeStaticTemplate = function(template){
-//     return Template[template].withData(this);
-// };
 
 
 /**

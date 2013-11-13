@@ -23,7 +23,7 @@ but when the [view-manager][1] package is available it uses the `View` class.
 Usage
 -----
 
-Use the `{{> Animate}}` helper or `AnimateTemplate` method and pass it a `Session` or `View` key name like {{> Animate placeholder="myKey"}}.
+Use the `{{> AnimateTemplate}}` helper or `AnimateTemplate` method and pass it a `Session` or `View` key name like {{> Animate placeholder="myKey"}}.
 Then use the `Session/View.set('keyName', 'templateName')` to render a template at this position.
 
 Additional you have to add a `animate` class to element(s) inside your template, which you want to animate.
@@ -85,9 +85,9 @@ To reload the last template. This will call the destroyed and created method of 
     View/Session.set('myTemplateKey','templateName');
 
 
-**Passing a template name to the {{> Animate}} helper**
+**Passing a template name to the {{> AnimateTemplate}} helper**
 
-    {{> Animate template="myTemplate"}}
+    {{> AnimateTemplate template="myTemplate"}}
 
     // or when using the method
 
