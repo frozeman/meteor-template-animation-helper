@@ -92,11 +92,11 @@ Helper: **See the `AnimateTemplate` method for details.**
 **Example usage**
 
     // to render a animation template in place use:
-    {{> Animate template="myTemplateName" delay=200}}
+    {{> AnimateTemplate template="myTemplateName" delay=200}}
 
     // or
 
-    {{> Animate placeholder="myKeyName" delay=200}}
+    {{> AnimateTemplate placeholder="myKeyName" delay=200}}
 
     // Then you can render any template by calling
     View/Session.set('myKeyName','templateName');
@@ -157,14 +157,14 @@ Template['Animate'].rendered = function(){
 /**
 This package makes it possible to animate templates.
 
-When using the `{{> Animate ...}}` helper your template will wait for all animations to be finished on elements with the class `animate`.
+When using the `{{> AnimateTemplate ...}}` helper your template will wait for all animations to be finished on elements with the class `animate`.
 When a template using this helper gets rendered, it will remove the `animate` class from your elements, causing your css transition to start.
 When the template then gets removed, by setting its templateKey inside the `Session` or `View` object to FALSE, it re-adds the `animate` class to the respective elements,
 causing them to animate back to its original state. After the animation happend, the template will be removed properly.
 
 
 You can either use `Session`, or the `View` class of the [view-manager][1] package.
-By default it uses `Session` to render templates at the position of the `{{> AnimateTemplate}}` helper,
+By default it uses `Session` to render templates at the position of the `{{> AnimateTemplateTemplate}}` helper,
 but when the [view-manager][1] package is available it uses the `View` class.
 
 [1]: https://atmosphere.meteor.com/package/view-manager
@@ -172,7 +172,7 @@ but when the [view-manager][1] package is available it uses the `View` class.
 Usage
 -----
 
-Use the `{{> Animate}}` helper or `AnimateTemplate` method and pass it a `Session` or `View` key name like {{> Animate placeholder="myKey"}}.
+Use the `{{> AnimateTemplate}}` helper or `AnimateTemplate` method and pass it a `Session` or `View` key name like {{> AnimateTemplate placeholder="myKey"}}.
 Then use the `Session/View.set('keyName', 'templateName')` to render a template at this position.
 
 Additional you have to add a `animate` class to element(s) inside your template, which you want to animate.
@@ -202,7 +202,7 @@ So that when the `animate` class gets removed a transition to its visible state 
 
 Place a template animation helper for `mytemplateKey` somewhere in your app:
 
-    {{> Animate placeholder="myKeyName"}}
+    {{> AnimateTemplate placeholder="myKeyName"}}
 
 To fade in the template from above at the position of the helper call
 
@@ -234,9 +234,9 @@ To reload the last template. This will call the destroyed and created method of 
     View/Session.set('myTemplateKey','templateName');
 
 
-**Passing a template name to the {{> Animate}} helper**
+**Passing a template name to the {{> AnimateTemplate}} helper**
 
-    {{> Animate template="myTemplate"}}
+    {{> AnimateTemplate template="myTemplate"}}
 
     // or when using the method
 
@@ -281,7 +281,7 @@ and animates it accordingly.
 **/
 Template['template-animation-helper'].rendered = function(){
     var _this = this
-        delay = this.data._delay || 1;
+        delay = this.data._delay || 0;
 
     this.data._animationElements = this.findAll('.animate');
 
@@ -433,7 +433,7 @@ Template['template-animation-helper'].placeTemplate = function(){
         placeholder = (this._templateAnimationKey) ? this._templateAnimationKey : this._placeholder,
         animateTemplate = Layout.get('_'+ placeholder),
         instance = '',
-        delay = this._delay || 1;
+        delay = this._delay || 0;
         templateDataChanged = this._templateDataChanged;
 
 

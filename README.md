@@ -8,7 +8,7 @@ Description
 
 This package makes it possible to animate templates.
 
-When using the `{{> Animate ...}}` helper your template will wait for all animations to be finished on elements with the class `animate`.
+When using the `{{> AnimateTemplate ...}}` helper your template will wait for all animations to be finished on elements with the class `animate`.
 When a template using this helper gets rendered, it will remove the `animate` class from your elements, causing your css transition to start.
 When the template then gets removed, by setting its templateKey inside the `Session` or `View` object to FALSE, it re-adds the `animate` class to the respective elements,
 causing them to animate back to its original state. After the animation happend, the template will be removed properly.
