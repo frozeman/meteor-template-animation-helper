@@ -141,11 +141,11 @@ and animates it accordingly.
 @return undefined
 **/
 Template['Animate'].rendered = function(){
-    var _this = this
-        delay = this.__component__.delay || 1;
+    var delay = this.__component__.delay || 1,
+        $element = $(this.findAll('.animate'));
 
     Meteor.setTimeout(function(){
-        $(_this.findAll('.animate')).removeClass('animate');
+        $element.removeClass('animate');
     }, delay);
 };
 
