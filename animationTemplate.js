@@ -333,8 +333,8 @@ Template['template-animation-helper'].runAnimations = function(){
     } else if(animateTemplate || this._template) {
 
         // console.log(!Layout.keys['_'+ _this.templateKey],
-            // Wrapper.getTemplateName(Layout.keys[_this.templateKey]), Wrapper.getTemplateName(Layout.keys['_'+ _this.templateKey]));
-            // console.log(animateTemplate, Layout.keys['_'+ _this.templateKey]);
+        // Wrapper.getTemplateName(Layout.keys[_this.templateKey]), Wrapper.getTemplateName(Layout.keys['_'+ _this.templateKey]));
+        // console.log(animateTemplate, Layout.keys['_'+ _this.templateKey]);
 
         // when a template is given
         if(this._template) {

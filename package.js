@@ -1,5 +1,5 @@
 Package.describe({
-    summary: "Allows to animate templates by adding a 'hidden' class with css transitions"
+    summary: "Allows to animate templates by adding a 'animate' class with css transitions"
 });
 
 Package.on_use(function (api) {
