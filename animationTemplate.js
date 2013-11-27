@@ -180,7 +180,8 @@ The `animate` class should put your elements in the state, before your template 
 So that when the `animate` class gets removed a transition to its visible state is happening.
 
 
-**An example of dynaimcally showing/removing a templates**
+An example of dynaimcally showing/removing a templates
+----
 
     // HTML
 
@@ -219,7 +220,8 @@ Additional you can call
 To reload the last template. This will call the destroyed and created method of that template again.
 
 
-**Return an AnimateTemplate from inside a helper**
+Return an AnimateTemplate from inside a helper
+----
 
     // HTML
 
@@ -234,7 +236,8 @@ To reload the last template. This will call the destroyed and created method of 
     View/Session.set('myTemplateKey','templateName');
 
 
-**Passing a template name to the {{> AnimateTemplate}} helper**
+Passing a template name to the {{> AnimateTemplate}} helper
+----
 
     {{> AnimateTemplate template="myTemplate"}}
 
@@ -321,13 +324,13 @@ Template['template-animation-helper'].runAnimations = function(){
 
     // RELOADS the current template
     if(animateTemplate === 'reload') {
-        var _animateTemplate = Layout.keys['_'+ placeholder];
+        // var _animateTemplate = Layout.keys['_'+ placeholder];
 
-        Layout.set(placeholder, false);
+        // Layout.set(placeholder, false);
 
-        Meteor.defer(function(){
-            Layout.set(placeholder, _animateTemplate);
-        });
+        // Meteor.defer(function(){
+        //     Layout.set(placeholder, _animateTemplate);
+        // });
 
     // SHOW the template
     } else if(animateTemplate || this._template) {
