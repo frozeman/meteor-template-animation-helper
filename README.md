@@ -3,7 +3,7 @@ Installation
 
     $ mrt add template-animation-helper
 
-**Note*** this version works only with new render engine! (use `$ meteor --release template-engine-preview-5`)
+**Warning!** this version works only with new render engine! (use `$ meteor --release template-engine-preview-5`)
 
 Description
 -----------
