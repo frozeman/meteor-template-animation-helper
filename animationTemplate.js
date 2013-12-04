@@ -392,10 +392,11 @@ Template['template-animation-helper'].runAnimations = function(){
             // start to animate elements backwards
             $(_this._animationElements).addClass('animate');
 
-            _this.animationTimeout = Meteor.setTimeout(function(){
+            _this._animationTimeout = Meteor.setTimeout(function(){
                 Layout.set('_'+ placeholder, false);
                 _this._animationElements = null;
             }, getDuration(_this._animationElements));
+
         }
     }
 };
