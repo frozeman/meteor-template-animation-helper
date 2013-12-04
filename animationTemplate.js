@@ -361,7 +361,9 @@ Template['template-animation-helper'].runAnimations = function(){
         // check if the template name hasn't changed
         } else if(Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(Layout.keys['_'+ placeholder])) {
 
-            _this._templateDataChanged = true;
+            // only remove the animate class immediately, when no fadeout process was started
+            if(!_this._animationTimeout)
+                _this._templateDataChanged = true;
             Layout.set('_'+ placeholder, animateTemplate);
 
 
