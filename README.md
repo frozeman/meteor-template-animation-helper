@@ -3,6 +3,8 @@ Installation
 
     $ mrt add template-animation-helper
 
+**Warning!** this version works only with new render engine! (use `$ meteor --release template-engine-preview-5`)
+
 Description
 -----------
 
@@ -31,7 +33,8 @@ The `animate` class should put your elements in the state, before your template 
 So that when the `animate` class gets removed a transition to its visible state is happening.
 
 
-**An example of dynaimcally showing/removing a templates**
+An example of dynaimcally showing/removing a templates
+-----
 
     // HTML
 
@@ -63,14 +66,9 @@ To fade out the template call
 
     View/Session.set('mytemplateKey', false);
 
-Additional you can call
 
-    View/Session.set('mytemplateKey', 'reload');
-
-To reload the last template. This will call the destroyed and created method of that template again.
-
-
-**Return an AnimateTemplate from inside a helper**
+Return an AnimateTemplate from inside a helper
+-----
 
     // HTML
 
@@ -85,7 +83,8 @@ To reload the last template. This will call the destroyed and created method of 
     View/Session.set('myTemplateKey','templateName');
 
 
-**Passing a template name to the {{> AnimateTemplate}} helper**
+Passing a template name to the `{{> AnimateTemplate}}` helper
+-----
 
     {{> AnimateTemplate template="myTemplate"}}
 
@@ -98,3 +97,17 @@ The data context of this template gets additionally the `_templateAnimationKey`,
 To do that call the following inside a helper or event of that specififc template:
 
     View/Session.set(this._templateAnimationKey, false);
+
+
+The {{#Animate}} block helper
+----
+
+`{{#Animate}}` block helper, which will remove any `animate` class from its child elements when rendered.
+Additionally you can provide an `delay` parameter to set a delay (in ms) for the animation to start.
+
+    {{#Animate delay=200}}
+        <div class="animate">
+            animates this content here
+            (you must provide some css transitions for the animate class)
+        </div>
+    {{/Animate}}
