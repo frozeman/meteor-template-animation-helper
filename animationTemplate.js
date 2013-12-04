@@ -376,7 +376,7 @@ Template['template-animation-helper'].runAnimations = function(){
 
             _this._animationTimeout = Meteor.setTimeout(function(){
                 Layout.set('_'+ placeholder, false);
-                _this._animationElements = null;
+                _this._animationElements = _this._animationTimeout = null;
 
                 // set the new template
                 Meteor.setTimeout(function(){
@@ -399,7 +399,7 @@ Template['template-animation-helper'].runAnimations = function(){
 
             _this._animationTimeout = Meteor.setTimeout(function(){
                 Layout.set('_'+ placeholder, false);
-                _this._animationElements = null;
+                _this._animationElements = _this._animationTimeout = null;
             }, getDuration(_this._animationElements));
 
         }
