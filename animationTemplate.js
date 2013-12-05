@@ -302,6 +302,7 @@ Callback: Called when the template gets destroyed.
 **/
 Template['template-animation-helper'].destroyed = function(){
     Meteor.clearTimeout(this.data._animationTimeout);
+    this.data._animationTimeout = null;
 };
 
 
@@ -442,6 +443,8 @@ Template['template-animation-helper'].placeTemplate = function(){
         delay = this._delay || 0;
         templateDataChanged = this._templateDataChanged;
 
+    // clear timeout, as everything should have happend by now
+    this._animationTimeout = null;
 
     // reset this._templateDataChanged
     this._templateDataChanged = false;
