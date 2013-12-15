@@ -70,11 +70,11 @@ To do that call the following inside a helper or event of that template:
 AnimateTemplate = function(values){
     var data = (this instanceof Window) ? {} : this;
 
-    if(_.isObject(values))
+    if(_.isObject(values.hash))
         data = _.extend(data, {
-            _template: values.template,
-            _placeholder: values.placeholder,
-            _delay: values.delay
+            _template: values.hash.template,
+            _placeholder: values.hash.placeholder,
+            _delay: values.hash.delay
         });
 
 
@@ -288,6 +288,7 @@ Template['template-animation-helper'].rendered = function(){
     Meteor.setTimeout(function(){
         $(_this.data._animationElements).removeClass('animate');
     }, delay);
+
 };
 
 
@@ -379,7 +380,6 @@ Template['template-animation-helper'].runAnimations = function(){
                 }, 10);
             }, getDuration(_this._animationElements));
         }
-
 
 
     // HIDE and the unrender the template
