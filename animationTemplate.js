@@ -180,8 +180,7 @@ The `animate` class should put your elements in the state, before your template 
 So that when the `animate` class gets removed a transition to its visible state is happening.
 
 
-An example of dynaimcally showing/removing a templates
-----
+**An example of dynaimcally showing/removing a templates**
 
     // HTML
 
@@ -220,8 +219,7 @@ Additional you can call
 To reload the last template. This will call the destroyed and created method of that template again.
 
 
-Return an AnimateTemplate from inside a helper
-----
+**Return an AnimateTemplate from inside a helper**
 
     // HTML
 
@@ -236,8 +234,7 @@ Return an AnimateTemplate from inside a helper
     View/Session.set('myTemplateKey','templateName');
 
 
-Passing a template name to the {{> AnimateTemplate}} helper
-----
+**Passing a template name to the {{> AnimateTemplate}} helper**
 
     {{> AnimateTemplate template="myTemplate"}}
 
@@ -302,7 +299,6 @@ Callback: Called when the template gets destroyed.
 **/
 Template['template-animation-helper'].destroyed = function(){
     Meteor.clearTimeout(this.data._animationTimeout);
-    this.data._animationTimeout = null;
 };
 
 
@@ -325,20 +321,20 @@ Template['template-animation-helper'].runAnimations = function(){
 
     // RELOADS the current template
     if(animateTemplate === 'reload') {
-        // var _animateTemplate = Layout.keys['_'+ placeholder];
+        var _animateTemplate = Layout.keys['_'+ placeholder];
 
-        // Layout.set(placeholder, false);
+        Layout.set(placeholder, false);
 
-        // Meteor.defer(function(){
-        //     Layout.set(placeholder, _animateTemplate);
-        // });
+        Meteor.defer(function(){
+            Layout.set(placeholder, _animateTemplate);
+        });
 
     // SHOW the template
     } else if(animateTemplate || this._template) {
 
         // console.log(!Layout.keys['_'+ _this.templateKey],
-        // Wrapper.getTemplateName(Layout.keys[_this.templateKey]), Wrapper.getTemplateName(Layout.keys['_'+ _this.templateKey]));
-        // console.log(animateTemplate, Layout.keys['_'+ _this.templateKey]);
+            // Wrapper.getTemplateName(Layout.keys[_this.templateKey]), Wrapper.getTemplateName(Layout.keys['_'+ _this.templateKey]));
+            // console.log(animateTemplate, Layout.keys['_'+ _this.templateKey]);
 
         // when a template is given
         if(this._template) {
@@ -362,9 +358,7 @@ Template['template-animation-helper'].runAnimations = function(){
         // check if the template name hasn't changed
         } else if(Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(Layout.keys['_'+ placeholder])) {
 
-            // only remove the animate class immediately, when no fadeout process was started
-            if(!_this._animationTimeout)
-                _this._templateDataChanged = true;
+            _this._templateDataChanged = true;
             Layout.set('_'+ placeholder, animateTemplate);
 
 
@@ -377,7 +371,7 @@ Template['template-animation-helper'].runAnimations = function(){
 
             _this._animationTimeout = Meteor.setTimeout(function(){
                 Layout.set('_'+ placeholder, false);
-                _this._animationElements = _this._animationTimeout = null;
+                _this._animationElements = null;
 
                 // set the new template
                 Meteor.setTimeout(function(){
@@ -398,11 +392,10 @@ Template['template-animation-helper'].runAnimations = function(){
             // start to animate elements backwards
             $(_this._animationElements).addClass('animate');
 
-            _this._animationTimeout = Meteor.setTimeout(function(){
+            _this.animationTimeout = Meteor.setTimeout(function(){
                 Layout.set('_'+ placeholder, false);
-                _this._animationElements = _this._animationTimeout = null;
+                _this._animationElements = null;
             }, getDuration(_this._animationElements));
-
         }
     }
 };
@@ -443,8 +436,6 @@ Template['template-animation-helper'].placeTemplate = function(){
         delay = this._delay || 0;
         templateDataChanged = this._templateDataChanged;
 
-    // clear timeout, as everything should have happend by now
-    this._animationTimeout = null;
 
     // reset this._templateDataChanged
     this._templateDataChanged = false;
