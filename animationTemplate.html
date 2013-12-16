@@ -1,14 +1,9 @@
 <template name="template-animation-helper">
+    {{runAnimations}}
 
-    {{runAnimations template placeholder}}
-
-    {{! #if isTemplate template}}
-        {{! > placeStaticTemplate template}}
-    {{! else}}
-        {{#if hasTemplate placeholder}}
-            {{> placeTemplate placeholder delay}}
-        {{/if}}
-    {{! /if}}
+    {{#if hasTemplate placeholder}}
+        {{> placeTemplate}}
+    {{/if}}
 </template>
 
 
