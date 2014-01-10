@@ -79,7 +79,7 @@ AnimateTemplate = function(values){
 
 
     return Wrapper.getTemplate('template-animation-helper', data);
-};;
+};
 
 
 
@@ -271,7 +271,6 @@ Template['template-animation-helper'].created = function(){
     this.data._animationTimeout;
     this.data._animationElements;
     this.data._templateDataChanged = false;
-
 };
 
 
@@ -291,6 +290,7 @@ Template['template-animation-helper'].rendered = function(){
     Meteor.setTimeout(function(){
         $(_this.data._animationElements).removeClass('animate');
     }, delay);
+
 };
 
 
@@ -318,6 +318,8 @@ Template['template-animation-helper'].runAnimations = function(){
     var _this = this,
         placeholder = (this._placeholder) ? this._placeholder : this._templateAnimationKey,
         animateTemplate = Layout.get(placeholder);
+
+
 
     // clear previous timeouts, of last fades
     Meteor.clearTimeout(_this._animationTimeout);
@@ -443,6 +445,7 @@ Template['template-animation-helper'].placeTemplate = function(){
         delay = this._delay || 0;
         templateDataChanged = this._templateDataChanged;
 
+
     // clear timeout, as everything should have happend by now
     this._animationTimeout = null;
 
@@ -463,14 +466,13 @@ Template['template-animation-helper'].placeTemplate = function(){
     // OVERWRITE the RENDERED FUNCTION of the template, to remove the animate classes
     if(instance.guid) {
         // HIJACK the rendered callback
-        instance.rendered = (function(rendered) {
+        instance.rendered = (function(rendered, templateDataChanged) {
             function extendsRendered() {
 
                 // call the original rendered callback
                 if(rendered)
                     rendered.call(this);
 
-                // remove the animate class immediatelly,
                 // and store the elements to the outer animateTemplate instance
                 _this._animationElements = this.findAll('.animate');
 
@@ -484,7 +486,7 @@ Template['template-animation-helper'].placeTemplate = function(){
                 }
             }
             return extendsRendered;
-        })(instance.rendered);
+        })(instance.rendered, templateDataChanged);
     }
 
     return instance;
