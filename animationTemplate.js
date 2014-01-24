@@ -320,7 +320,6 @@ Template['template-animation-helper'].runAnimations = function(){
         animateTemplate = Layout.get(placeholder);
 
 
-
     // clear previous timeouts, of last fades
     Meteor.clearTimeout(_this._animationTimeout);
 
@@ -405,6 +404,10 @@ Template['template-animation-helper'].runAnimations = function(){
                 _this._animationElements = _this._animationTimeout = null;
             }, getDuration(_this._animationElements));
 
+        // if there are not elements, or they are already gone, set to immediately
+        } else {
+            Layout.set('_'+ placeholder, false);
+            _this._animationElements = _this._animationTimeout = null;
         }
     }
 };
