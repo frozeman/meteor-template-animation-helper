@@ -287,6 +287,7 @@ Template['template-animation-helper'].rendered = function(){
 
     this.data._animationElements = this.findAll('.animate');
 
+    Meteor.clearTimeout(this.data._animationTimeout);
     Meteor.setTimeout(function(){
         $(_this.data._animationElements).removeClass('animate');
     }, delay);
@@ -366,6 +367,10 @@ Template['template-animation-helper'].runAnimations = function(){
             // only remove the animate class immediately, when no fadeout process was started
             if(!_this._animationTimeout)
                 _this._templateDataChanged = true;
+
+            // make sure it removes the animation class, if a fadeout process already started
+            $(_this._animationElements).removeClass('animate');
+
             Layout.set('_'+ placeholder, animateTemplate);
 
 
@@ -373,16 +378,17 @@ Template['template-animation-helper'].runAnimations = function(){
         } else if(_this._animationElements) {
 
             // start to animate elements backwards
-            $(_this._animationElements).addClass('animate');
+            if(!_this._animationTimeout)
+                $(_this._animationElements).addClass('animate');
 
 
             _this._animationTimeout = Meteor.setTimeout(function(){
                 Layout.set('_'+ placeholder, false);
-                _this._animationElements = _this._animationTimeout = null;
 
                 // set the new template
-                Meteor.setTimeout(function(){
+                _this._animationTimeout = Meteor.setTimeout(function(){
                     Layout.set('_'+ placeholder, animateTemplate);
+                    _this._animationElements = _this._animationTimeout = null;
                 }, 10);
             }, getDuration(_this._animationElements));
         }
@@ -394,15 +400,19 @@ Template['template-animation-helper'].runAnimations = function(){
 
         // if an animation element exists,
         // get its transition-duration and remove the template after this.
-        if(_this._animationElements) {
+        if(_this._animationElements && !_this._animationTimeout) {
 
-            // start to animate elements backwards
-            $(_this._animationElements).addClass('animate');
+            // start to animate elements backwards (only when no animation is running)
+            // if() {
 
-            _this._animationTimeout = Meteor.setTimeout(function(){
-                Layout.set('_'+ placeholder, false);
-                _this._animationElements = _this._animationTimeout = null;
-            }, getDuration(_this._animationElements));
+                $(_this._animationElements).addClass('animate');
+
+                _this._animationTimeout = Meteor.setTimeout(function(){
+                    Layout.set('_'+ placeholder, false);
+                    _this._animationElements = _this._animationTimeout = null;
+                }, getDuration(_this._animationElements));
+            // }
+
 
         // if there are not elements, or they are already gone, set to immediately
         } else {
@@ -448,9 +458,7 @@ Template['template-animation-helper'].placeTemplate = function(){
         delay = this._delay || 0;
         templateDataChanged = this._templateDataChanged;
 
-
-    // clear timeout, as everything should have happend by now
-    this._animationTimeout = null;
+ _this._animationTimeout = null
 
     // reset this._templateDataChanged
     this._templateDataChanged = false;
@@ -480,9 +488,11 @@ Template['template-animation-helper'].placeTemplate = function(){
                 _this._animationElements = this.findAll('.animate');
 
 
-                if(templateDataChanged)
+                if(templateDataChanged) {
+
                     $(_this._animationElements).removeClass('animate');
-                else {
+
+                } else {
                     Meteor.setTimeout(function(){
                         $(_this._animationElements).removeClass('animate');
                     }, delay);
