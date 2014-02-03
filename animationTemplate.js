@@ -113,7 +113,7 @@ Helper: **See the `AnimateTemplate` method for details.**
 
 @return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
 **/
-Handlebars.registerHelper('AnimateTemplate', AnimateTemplate);
+UI.body.AnimateTemplate = AnimateTemplate;
 
 
 
