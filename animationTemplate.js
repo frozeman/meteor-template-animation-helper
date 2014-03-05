@@ -292,104 +292,102 @@ Template['template-animation-helper'].created = function(){
         _this._templateDataChanged = false;
 
 
-        if(!c.firstRun) {
 
-            // clear previous timeouts, of last fades
-            Meteor.clearTimeout(_this._animationTimeout);
-
-
-            // RELOADS the current template
-            if(animateTemplate === 'reload') {
-                // var _animateTemplate = Layout.keys['_'+ placeholder];
-
-                // Layout.set(placeholder, false);
-
-                // Meteor.defer(function(){
-                //     Layout.set(placeholder, _animateTemplate);
-                // });
-
-            // SHOW the template
-            } else if(animateTemplate || _this.template) {
-
-                // console.log(!Layout.keys['_'+ _this.templateKey],
-                // Wrapper.getTemplateName(Layout.keys[_this.templateKey]), Wrapper.getTemplateName(Layout.keys['_'+ _this.templateKey]));
-                // console.log(animateTemplate, Layout.keys['_'+ _this.templateKey]);
-
-                // when a template is given
-                if(_this.template) {
-                    console.log('here 1');
-                    var uniqueKeyName = Wrapper.getTemplateName(_this.template) + _.uniqueId('_templateKey_');
-                    // set the keyName
-                    // Layout.setDefault(uniqueKeyName, template);
-                    _this._templateAnimationKey = uniqueKeyName;
-                    // make this function reactive
-                    Layout.get(_this._templateAnimationKey);
-                    // set the key immediately
-                    Layout.setDefault(uniqueKeyName, _this.template);
-                    Layout.setDefault('_'+ uniqueKeyName, _this.template);
-                    // remove the template as we set it already to the reactive Session.
-                    _this.template = null;
-
-                // check if there is not already a template rendered
-                } else if(!Layout.keys['_'+ placeholder]) {
-
-                    Layout.set('_'+ placeholder, animateTemplate);
-
-                // check if the template name hasn't changed
-                } else if(Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(Layout.keys['_'+ placeholder])) {
-
-                    // only remove the animate class immediately, when no fadeout process was started
-                    if(!_this._animationTimeout)
-                        _this._templateDataChanged = true;
-
-                    // make sure it removes the animation class, if a fadeout process already started
-                    $(_this._animationElements).removeClass('animate');
-
-                    Layout.set('_'+ placeholder, animateTemplate);
+        // clear previous timeouts, of last fades
+        Meteor.clearTimeout(_this._animationTimeout);
 
 
-                // otherwise fade out the old template and set the new
-                } else if(_this._animationElements) {
+        // RELOADS the current template
+        if(animateTemplate === 'reload') {
+            // var _animateTemplate = Layout.keys['_'+ placeholder];
 
+            // Layout.set(placeholder, false);
+
+            // Meteor.defer(function(){
+            //     Layout.set(placeholder, _animateTemplate);
+            // });
+
+        // SHOW the template
+        } else if(animateTemplate || _this.template) {
+
+            // console.log(!Layout.keys['_'+ _this.templateKey],
+            // Wrapper.getTemplateName(Layout.keys[_this.templateKey]), Wrapper.getTemplateName(Layout.keys['_'+ _this.templateKey]));
+            // console.log(animateTemplate, Layout.keys['_'+ _this.templateKey]);
+
+            // when a template is given
+            if(_this.template) {
+                console.log('here 1');
+                var uniqueKeyName = Wrapper.getTemplateName(_this.template) + _.uniqueId('_templateKey_');
+                // set the keyName
+                // Layout.setDefault(uniqueKeyName, template);
+                _this._templateAnimationKey = uniqueKeyName;
+                // make this function reactive
+                Layout.get(_this._templateAnimationKey);
+                // set the key immediately
+                Layout.setDefault(uniqueKeyName, _this.template);
+                Layout.setDefault('_'+ uniqueKeyName, _this.template);
+                // remove the template as we set it already to the reactive Session.
+                _this.template = null;
+
+            // check if there is not already a template rendered
+            } else if(!Layout.keys['_'+ placeholder]) {
+
+                Layout.set('_'+ placeholder, animateTemplate);
+
+            // check if the template name hasn't changed
+            } else if(Wrapper.getTemplateName(animateTemplate) === Wrapper.getTemplateName(Layout.keys['_'+ placeholder])) {
+
+                // only remove the animate class immediately, when no fadeout process was started
+                if(!_this._animationTimeout)
+                    _this._templateDataChanged = true;
+
+                // make sure it removes the animation class, if a fadeout process already started
+                $(_this._animationElements).removeClass('animate');
+
+                Layout.set('_'+ placeholder, animateTemplate);
+
+
+            // otherwise fade out the old template and set the new
+            } else if(_this._animationElements) {
+
+                _this._animationTimeout = Meteor.setTimeout(function(){
+                    Layout.set('_'+ placeholder, false);
+
+                    // set the new template
                     _this._animationTimeout = Meteor.setTimeout(function(){
-                        Layout.set('_'+ placeholder, false);
-
-                        // set the new template
-                        _this._animationTimeout = Meteor.setTimeout(function(){
-                            Layout.set('_'+ placeholder, animateTemplate);
-                            _this._animationElements = _this._animationTimeout = null;
-                        }, 10);
-                    }, getDuration(_this._animationElements));
-
-
-                    // start to animate elements backwards
-                    if(!_this._animationTimeout)
-                        $(_this._animationElements).addClass('animate');
-                }
-
-
-
-            // HIDE and the unrender the template
-            } else {
-                // if an animation element exists,
-                // get its transition-duration and remove the template after this.
-                if(_this._animationElements && !_this._animationTimeout) {
-
-                    _this._animationTimeout = Meteor.setTimeout(function(){
-                        Layout.set('_'+ placeholder, false);
+                        Layout.set('_'+ placeholder, animateTemplate);
                         _this._animationElements = _this._animationTimeout = null;
-                    }, getDuration(_this._animationElements));
+                    }, 10);
+                }, getDuration(_this._animationElements));
 
 
-                    // animate after, to the getDuration wont be affected
+                // start to animate elements backwards
+                if(!_this._animationTimeout)
                     $(_this._animationElements).addClass('animate');
+            }
 
 
-                // if there are not elements, or they are already gone, set to immediately
-                } else {
+
+        // HIDE and the unrender the template
+        } else {
+            // if an animation element exists,
+            // get its transition-duration and remove the template after this.
+            if(_this._animationElements && !_this._animationTimeout) {
+
+                _this._animationTimeout = Meteor.setTimeout(function(){
                     Layout.set('_'+ placeholder, false);
                     _this._animationElements = _this._animationTimeout = null;
-                }
+                }, getDuration(_this._animationElements));
+
+
+                // animate after, to the getDuration wont be affected
+                $(_this._animationElements).addClass('animate');
+
+
+            // if there are not elements, or they are already gone, set to immediately
+            } else {
+                Layout.set('_'+ placeholder, false);
+                _this._animationElements = _this._animationTimeout = null;
             }
         }
     });
