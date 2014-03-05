@@ -15,10 +15,10 @@ Wrapper.isTemplate = function(templateName){
     else
         return (Template[templateName]) ? true : false;
 };
-Wrapper.getTemplate = function(templateName, data){
+Wrapper.getTemplate = function(templateName, context){
     return (Package['view-manager'])
-        ? Package['view-manager'].View.getTemplate(templateName, data)
-        : Template[templateName].extend({data: data});
+        ? Package['view-manager'].View.getTemplate(templateName, context)
+        : Template[templateName].extend({data: context});
 };
 Wrapper.getTemplateName = function(templateName){
     return (Package['view-manager'])
@@ -472,14 +472,20 @@ Template['template-animation-helper'].placeTemplate = function(){
 
 
     if(Wrapper.isTemplate(animateTemplate)) {
-        // clean up data context
-        var data = _.clone(this);
-        delete data.template;
-        delete data._templateDataChanged;
-        delete data.delay;
-        delete data.placeholder;
 
-        instance = Wrapper.getTemplate(animateTemplate, data);
+        if(!this.context)
+            this.context = {};
+
+        this.context._templateAnimationKey = placeholder;
+
+        // clean up data context
+        // var data = _.clone(this);
+        // delete data.template;
+        // delete data._templateDataChanged;
+        // delete data.delay;
+        // delete data.placeholder;
+
+        instance = Wrapper.getTemplate(animateTemplate, this.context);
     }
 
     // OVERWRITE the RENDERED FUNCTION of the template, to remove the animate classes

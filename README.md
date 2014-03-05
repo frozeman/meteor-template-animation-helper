@@ -56,7 +56,7 @@ An example of dynaimcally showing/removing a templates
 
 Place a template animation helper for `mytemplateKey` somewhere in your app:
 
-    {{> Animate placeholder="myKeyName"}}
+    {{> Animate placeholder="myKeyName" context=someData}}
 
 To fade in the template from above at the position of the helper call
 
@@ -90,7 +90,7 @@ Passing a template name to the `{{> AnimateTemplate}}` helper
 
     // or when using the method
 
-    return AnimateTemplate({template: 'myTemplate'});
+    return AnimateTemplate({template: 'myTemplate', context: someData});
 
 You can also pass a template name to the helper, this will render and animate the template in place immediately,
 The data context of this template gets additionally the `_templateAnimationKey`, so you can later manually animate the template out.
