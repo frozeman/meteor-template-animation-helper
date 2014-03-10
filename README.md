@@ -69,28 +69,25 @@ To fade out the template call
 
 Return an AnimateTemplate from inside a helper
 -----
-
+    
     // HTML
-
-    {{> myhelper}}
+    {{> AnimateTemplate myhelper}}
 
     // JS
     Template.myTemplate.myhelper = function(){
-        return AnimateTemplate({placeholder: 'myTemplateKey'});
+        return {
+            placeholder: 'myKeyName'
+        };
     };
 
     // Then you can render the template by calling
-    View/Session.set('myTemplateKey','templateName');
+    View/Session.set('myKeyName','templateName');
 
 
 Passing a template name to the `{{> AnimateTemplate}}` helper
 -----
 
     {{> AnimateTemplate template="myTemplate"}}
-
-    // or when using the method
-
-    return AnimateTemplate({template: 'myTemplate', context: someData});
 
 You can also pass a template name to the helper, this will render and animate the template in place immediately,
 The data context of this template gets additionally the `_templateAnimationKey`, so you can later manually animate the template out.

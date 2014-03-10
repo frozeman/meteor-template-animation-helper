@@ -41,8 +41,12 @@ Get the current template set in an `Session` or `View` key and place it inside t
 
 **Example usage**
 
+    {{> AnimateTemplate myhelper}}
+
     Template.myTemplate.myhelper = function(){
-        return AnimateTemplate({placeholder: 'myKeyName'});
+        return {
+            placeholder: 'myKeyName'
+        };
     };
 
     // Then you can render the template by calling
@@ -67,19 +71,6 @@ To do that call the following inside a helper or event of that template:
 
 @return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
 **/
-AnimateTemplate = function(){
-    // var data = (this instanceof Window) ? {} : this;
-
-    // if(this && _.isObject(this))
-    //     data = _.extend(data, {
-    //         _template: this.template,
-    //         _placeholder: this.placeholder,
-    //         _delay: this.delay
-    //     });
-
-
-    return Wrapper.getTemplate('template-animation-helper');
-};
 
 
 
@@ -113,7 +104,7 @@ Helper: **See the `AnimateTemplate` method for details.**
 
 @return {Object|undefined} The template to be placed inside the current template or undefined when no template was set to this key
 **/
-UI.body.AnimateTemplate = AnimateTemplate;
+// AnimateTemplate;
 
 
 
@@ -265,7 +256,7 @@ which will be used to store the timeOut ID of the fade out animation duration.
 @method created
 @return undefined
 **/
-Template['template-animation-helper'].created = function(){
+Template['AnimateTemplate'].created = function(){
     var template = this;
     
     this.properties = {};
@@ -316,7 +307,6 @@ Template['template-animation-helper'].created = function(){
 
             // when a template is given
             if(_this.template) {
-                console.log('here 1');
                 var uniqueKeyName = Wrapper.getTemplateName(_this.template) + _.uniqueId('_templateKey_');
                 // set the keyName
                 // Layout.setDefault(uniqueKeyName, template);
@@ -401,7 +391,7 @@ and animates it accordingly.
 @method rendered
 @return undefined
 **/
-Template['template-animation-helper'].rendered = function(){
+Template['AnimateTemplate'].rendered = function(){
     var _this = this,
         delay = (this.data && this.data.delay) ? this.data.delay : 1;
 
@@ -421,7 +411,7 @@ Callback: Called when the template gets destroyed.
 @method destroyed
 @return undefined
 **/
-Template['template-animation-helper'].destroyed = function(){
+Template['AnimateTemplate'].destroyed = function(){
     Meteor.clearTimeout(this.data._animationTimeout);
     this.data._animationTimeout = null;
 
@@ -441,7 +431,7 @@ Helper: When a template was set, render the wrapper template to start animation.
 @method hasTemplate
 @return {Boolean} check if a new template was set
 **/
-Template['template-animation-helper'].hasTemplate = function(){
+Template['AnimateTemplate'].hasTemplate = function(){
     var placeholder = (this._templateAnimationKey) ? this._templateAnimationKey : this.placeholder;
 
     if(Layout.get(placeholder) && Layout.get('_'+ placeholder))
@@ -462,17 +452,16 @@ This helper hijacks the `rendered` callback of the template to remove the `anima
 @method placeTemplate
 @return {Object} the current template
 **/
-Template['template-animation-helper'].placeTemplate = function(){
+Template['AnimateTemplate'].placeTemplate = function(){
     var _this = this,
         placeholder = (this._templateAnimationKey) ? this._templateAnimationKey : this.placeholder,
         animateTemplate = Layout.get('_'+ placeholder),
-        instance = '',
+        instance = null,
         delay = this.delay || 0;
         templateDataChanged = this._templateDataChanged;
 
 
     if(Wrapper.isTemplate(animateTemplate)) {
-
         if(!this.context)
             this.context = {};
 
@@ -485,38 +474,43 @@ Template['template-animation-helper'].placeTemplate = function(){
         // delete data.delay;
         // delete data.placeholder;
 
-        instance = Wrapper.getTemplate(animateTemplate, this.context);
-    }
+        instance = Wrapper.getTemplate(animateTemplate);
 
-    // OVERWRITE the RENDERED FUNCTION of the template, to remove the animate classes
-    if(instance.guid) {
-        // HIJACK the rendered callback
-        instance.rendered = (function(rendered, templateDataChanged) {
-            function extendsRendered() {
+        // OVERWRITE the RENDERED FUNCTION of the template, to remove the animate classes
+        if(instance.guid) {
+            // HIJACK the rendered callback
+            instance.rendered = (function(rendered, templateDataChanged) {
+                function extendsRendered() {
 
-                // call the original rendered callback
-                if(rendered)
-                    rendered.call(this);
+                    // call the original rendered callback
+                    if(rendered)
+                        rendered.call(this);
 
-                // and store the elements to the outer animateTemplate instance
-                _this._animationElements = this.findAll('.animate');
+                    // and store the elements to the outer animateTemplate instance
+                    _this._animationElements = this.findAll('.animate');
 
 
-                if(templateDataChanged) {
+                    if(templateDataChanged) {
 
-                    $(_this._animationElements).removeClass('animate');
-
-                } else {
-                    Meteor.setTimeout(function(){
                         $(_this._animationElements).removeClass('animate');
-                    }, delay);
-                }
-            }
-            return extendsRendered;
-        })(instance.rendered, templateDataChanged);
-    }
 
-    return (instance) ? instance : null;
+                    } else {
+                        Meteor.setTimeout(function(){
+                            $(_this._animationElements).removeClass('animate');
+                        }, delay);
+                    }
+                }
+                return extendsRendered;
+            })(instance.rendered, templateDataChanged);
+        }
+
+        return (instance) ? {
+            template: instance,
+            context: this.context
+        } : null;
+
+    } else
+        return false;
 };
 
 

@@ -1,7 +1,12 @@
-<template name="template-animation-helper">
-    {{#if hasTemplate}}
-        {{> placeTemplate}}
-    {{/if}}
+<template name="AnimateTemplate">
+	{{#if hasTemplate}}
+		{{#with placeTemplate}}
+		
+			{{#with context}}
+				{{> ../template}}
+			{{/with}}
+		{{/with}}
+	{{/if}}
 </template>
 
 
