@@ -39,7 +39,7 @@ An example of dynaimcally showing/removing a templates
     // HTML
 
     <template name="myTemplate">
-        <div class="animate myTemplateWrapper">
+        <div class="myTemplateWrapper animate">
             ...
         </div>
     </template>
@@ -56,7 +56,7 @@ An example of dynaimcally showing/removing a templates
 
 Place a template animation helper for `mytemplateKey` somewhere in your app:
 
-    {{> Animate placeholder="myKeyName" context=someData}}
+    {{> Animate placeholder="myKeyName" context=optionalDataContext}}
 
 To fade in the template from above at the position of the helper call
 

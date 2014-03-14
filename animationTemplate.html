@@ -1,12 +1,11 @@
 <template name="AnimateTemplate">
-	{{#if hasTemplate}}
-		{{#with placeTemplate}}
-		
+	{{#with getTemplate}}
+		{{#Animate}}
 			{{#with context}}
 				{{> ../template}}
 			{{/with}}
-		{{/with}}
-	{{/if}}
+		{{/Animate}}
+	{{/with}}
 </template>
 
 
