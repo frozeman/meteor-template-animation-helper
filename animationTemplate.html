@@ -1,6 +1,6 @@
 <template name="AnimateTemplate">
 	{{#with getTemplate}}
-		{{#Animate}}
+		{{#Animate delay=delay}}
 			{{#with context}}
 				{{> ../template}}
 			{{/with}}
@@ -11,5 +11,5 @@
 
 <!-- Component -->
 <template name="Animate">
-    {{> content}}
+    {{> UI.contentBlock}}
 </template>

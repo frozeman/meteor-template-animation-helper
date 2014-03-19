@@ -333,7 +333,8 @@ Template['AnimateTemplate'].getTemplate = function(){
 
         return (instance) ? {
             template: instance,
-            context: context
+            context: context,
+            delay: delay
         } : null;
 
     } else
