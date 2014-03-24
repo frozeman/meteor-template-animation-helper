@@ -202,21 +202,18 @@ Template['AnimateTemplate'].created = function(){
     **/
     this.properties.runAnimationsReactiveFunctions = Deps.autorun(function(c){
         var _this = template.data,
-            placeholder = (_this.placeholder) ? _this.placeholder : _this._templateAnimationKey,
-            animateTemplate = Layout.get(placeholder);
+            placeholder = (_this.template) ? getUniqueKey(_this.template, template.__component__.guid) : _this.placeholder,
+            animateTemplate = (placeholder) ? Layout.get(placeholder) : false;
 
         Meteor.clearTimeout(_this._animationTimeout);
 
-        if(_this.template) {
-            var uniqueKeyName = Wrapper.getTemplateName(_this.template) + _.uniqueId('_templateKey_');
+        if(_this.template && !animateTemplate) {
+            var uniqueKeyName = getUniqueKey(_this.template, template.__component__.guid);
             // set the keyName
-            // Layout.setDefault(uniqueKeyName, template);
-            _this._templateAnimationKey = uniqueKeyName;
-            // make this function reactive
-            Layout.get(_this._templateAnimationKey);
+            _this.placeholder = uniqueKeyName;
             // set the key immediately
-            Layout.setDefault(uniqueKeyName, _this.template);
-            Layout.setDefault('_'+ uniqueKeyName, _this.template);
+            Layout.set(uniqueKeyName, _this.template);
+
             // remove the template as we set it already to the reactive Session.
             _this.template = null;
 
@@ -288,14 +285,13 @@ This helper hijacks the `rendered` callback of the template to remove the `anima
 @method getTemplate
 @return {Object} the current template
 **/
-Template['AnimateTemplate'].getTemplate = function(){
+Template['AnimateTemplate'].getTemplate = function(guid){
     var _this = this,
-        placeholder = (this._templateAnimationKey) ? this._templateAnimationKey : this.placeholder,
+        placeholder = (this.template) ? getUniqueKey(_this.template, guid) : this.placeholder,
         animateTemplate = Layout.get('_'+ placeholder),
         instance = null,
         delay = this.delay || 0,
         context = {};
-
 
     if(Wrapper.isTemplate(animateTemplate)) {
 
@@ -330,7 +326,6 @@ Template['AnimateTemplate'].getTemplate = function(){
             })(instance.rendered);
         }
 
-
         return (instance) ? {
             template: instance,
             context: context,
@@ -343,6 +338,10 @@ Template['AnimateTemplate'].getTemplate = function(){
 
 
 // METHODs
+var getUniqueKey = function(template, guid) {
+    return Wrapper.getTemplateName(template) + '_templateKey_' + guid;
+};
+
 
 /**
 Returns the transition duration of the given element(s) in milliseconds.
