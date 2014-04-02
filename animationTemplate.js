@@ -271,6 +271,9 @@ Template['AnimateTemplate'].destroyed = function(){
 
     if(this.properties.runAnimationsReactiveFunctions)
         this.properties.runAnimationsReactiveFunctions.stop();
+    
+    // clean properties
+    this.properties = null
 };
 
 
