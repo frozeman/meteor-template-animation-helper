@@ -364,6 +364,7 @@ var getDuration = function(animationElements){
 
     duration = _.flatten(duration);
 
+
     // get the highest duration in ms
     if(_.isArray(duration) && !_.isEmpty(duration)) {
 
@@ -371,11 +372,10 @@ var getDuration = function(animationElements){
             if(_.isString(item)) {
                 var value = 0;
                 if(item.indexOf('ms') !== -1)
-                    value = item.replace(/[ms| ]+/g ,'');
+                    value = Number(item.replace(/[ms|\,| ]+/g ,''));
                 else
-                    value = item.replace(/[s| ]+/g ,'') * 1000;
-
-                return parseInt(value);
+                    value = Number(item.replace(/[s|\,| ]+/g ,'')) * 1000;
+                return value;
             }
         }))
     } else
