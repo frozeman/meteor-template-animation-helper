@@ -218,14 +218,30 @@ Template['AnimateTemplate'].created = function(){
             _this.template = null;
 
         } else if(animateTemplate) {
-            // set the template
-            Layout.set('_'+ placeholder, animateTemplate);
+
+
+            // make sure the animate class gets removed, when switching templates
+            if(_this._animationElements) {
+
+
+                _this._animationTimeout = Meteor.setTimeout(function(){
+                    Layout.set('_'+ placeholder, animateTemplate);
+                }, getDuration(_this._animationElements));
+
+
+                // animate after, to the getDuration wont be affected
+                $(_this._animationElements).addClass('animate');
+
+            } else {
+                // set the template
+                Layout.set('_'+ placeholder, animateTemplate);
+            }
                     
         // hide template
         } else {
             // if an animation element exists,
             // get its transition-duration and remove the template after this.
-            if(_this._animationElements && !_this._animationTimeout) {
+            if(_this._animationElements) { //&& !_this._animationTimeout
 
                 _this._animationTimeout = Meteor.setTimeout(function(){
                     Layout.set('_'+ placeholder, false);
@@ -311,6 +327,14 @@ Template['AnimateTemplate'].getTemplate = function(guid){
 
         // // get template
         instance = Wrapper.getTemplate(animateTemplate);
+
+
+        // make sure animate class always gets removed, when changing the template
+        if(_this._animationElements)
+            Meteor.defer(function(){
+                $(_this._animationElements).removeClass('animate');
+            });
+
 
         // OVERWRITE the RENDERED FUNCTION of the template, to remove the animate classes
         if(instance && instance.guid) {
