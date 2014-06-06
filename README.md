@@ -3,12 +3,12 @@ Installation
 
     $ mrt add template-animation-helper
 
-**Warning!** this version works only with the new render engine! (use `$ meteor --release blaze-rc0`)
-
 Description
 -----------
 
 This package makes it possible to animate templates.
+
+For a demo see http://templateAnimationHelperDemo.meteor.com or https://github.com/frozeman/meteorTemplateAnimationHelperDemo
 
 When using the `{{> AnimateTemplate ...}}` helper your template will wait for all animations to be finished on elements with the class `animate`.
 When a template using this helper gets rendered, it will remove the `animate` class from your elements, causing your css transition to start.
@@ -56,7 +56,7 @@ An example of dynaimcally showing/removing a templates
 
 Place a template animation helper for `mytemplateKey` somewhere in your app:
 
-    {{> Animate placeholder="myKeyName" context=optionalDataContext}}
+    {{> AnimateTemplate placeholder="myKeyName" context=optionalDataContext}}
 
 To fade in the template from above at the position of the helper call
 
