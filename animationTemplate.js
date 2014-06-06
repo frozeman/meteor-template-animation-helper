@@ -330,8 +330,8 @@ Template['AnimateTemplate'].getTemplate = function(guid){
 
             instance.init = function() {
                 this.rendered = function(){
-                    if(this.rendered)
-                        this.rendered();
+                    if(instance.rendered)
+                        instance.rendered.call(this);
 
                     _this._animationElements = this.findAll('.animate');
                 }
