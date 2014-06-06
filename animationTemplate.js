@@ -223,17 +223,10 @@ Template['AnimateTemplate'].created = function(){
             // make sure the animate class gets removed, when switching templates
             if(_this._animationElements) {
 
-
-                _this._animationTimeout = Meteor.setTimeout(function(){
-                    Meteor.defer(function(){
-                        $(_this._animationElements).removeClass('animate');
-                    });
-                    Layout.set('_'+ placeholder, animateTemplate);
-                }, getDuration(_this._animationElements));
-
-
-                // animate after, to the getDuration wont be affected
-                $(_this._animationElements).addClass('animate');
+                Meteor.defer(function(){
+                    $(_this._animationElements).removeClass('animate');
+                });
+                Layout.set('_'+ placeholder, animateTemplate);
 
             } else {
                 // set the template
