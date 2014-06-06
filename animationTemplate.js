@@ -58,7 +58,7 @@ and animates it accordingly.
 @return undefined
 **/
 Template['Animate'].rendered = function(){
-    var delay = (this.data && this.data.delay) ? this.data.delay : 1,
+    var delay = (this.data && this.data.delay) ? this.data.delay : 10,
         $element = $(this.findAll('.animate'));
 
     Meteor.setTimeout(function(){
@@ -225,6 +225,9 @@ Template['AnimateTemplate'].created = function(){
 
 
                 _this._animationTimeout = Meteor.setTimeout(function(){
+                    Meteor.defer(function(){
+                        $(_this._animationElements).removeClass('animate');
+                    });
                     Layout.set('_'+ placeholder, animateTemplate);
                 }, getDuration(_this._animationElements));
 
@@ -326,31 +329,20 @@ Template['AnimateTemplate'].getTemplate = function(guid){
             context = _.extend(context, animateTemplate.context);
 
         // // get template
-        instance = Wrapper.getTemplate(animateTemplate);
-
-
-        // make sure animate class always gets removed, when changing the template
-        if(_this._animationElements)
-            Meteor.defer(function(){
-                $(_this._animationElements).removeClass('animate');
-            });
+        instance = Wrapper.getTemplate(animateTemplate);  
 
 
         // OVERWRITE the RENDERED FUNCTION of the template, to remove the animate classes
         if(instance && instance.guid) {
-            // HIJACK the rendered callback
-            instance.rendered = (function(rendered) {
-                function extendsRendered() {
 
-                    // call the original rendered callback
-                    if(rendered)
-                        rendered.call(this);
+            instance.init = function() {
+                this.rendered = function(){
+                    if(this.rendered)
+                        this.rendered();
 
-                    // and store the elements to the outer animateTemplate instance
                     _this._animationElements = this.findAll('.animate');
                 }
-                return extendsRendered;
-            })(instance.rendered);
+            }
         }
 
         return (instance) ? {
