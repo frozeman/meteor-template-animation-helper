@@ -59,10 +59,10 @@ and animates it accordingly.
 **/
 Template['Animate'].rendered = function(){
     var delay = (this.data && this.data.delay) ? this.data.delay : 10,
-        $element = $(this.findAll('.animate'));
+        $elements = this.$('.animate');
 
     Meteor.setTimeout(function(){
-        $element.removeClass('animate');
+        $elements.removeClass('animate');
     }, delay);
 };
 
@@ -189,7 +189,7 @@ Template['AnimateTemplate'].created = function(){
 
     // set an animation timeout, used the by the timeout in the reactiveAnimator helper function.
     this.data._animationTimeout;
-    this.data._animationElements;
+    this.data._$animationElements;
     this.data._templateAnimationKey;
 
 
@@ -220,11 +220,11 @@ Template['AnimateTemplate'].created = function(){
         } else if(animateTemplate) {
 
 
-            // make sure the animate class gets removed, when switching templates
-            if(_this._animationElements) {
+            // only remove the animation class again, if there is already a template
+            if(_this._$animationElements && Layout.keys['_'+ placeholder]) {
 
                 Meteor.defer(function(){
-                    $(_this._animationElements).removeClass('animate');
+                    _this._$animationElements.removeClass('animate');
                 });
                 Layout.set('_'+ placeholder, animateTemplate);
 
@@ -237,22 +237,22 @@ Template['AnimateTemplate'].created = function(){
         } else {
             // if an animation element exists,
             // get its transition-duration and remove the template after this.
-            if(_this._animationElements) { //&& !_this._animationTimeout
+            if(_this._$animationElements) { //&& !_this._animationTimeout
 
                 _this._animationTimeout = Meteor.setTimeout(function(){
                     Layout.set('_'+ placeholder, false);
-                    _this._animationElements = _this._animationTimeout = null;
-                }, getDuration(_this._animationElements));
+                    _this._$animationElements = _this._animationTimeout = null;
+                }, getDuration(_this._$animationElements));
 
 
                 // animate after, to the getDuration wont be affected
-                $(_this._animationElements).addClass('animate');
+                _this._$animationElements.addClass('animate');
 
 
             // if there are not elements, or they are already gone, set to immediately
             } else {
                 Layout.set('_'+ placeholder, false);
-                _this._animationElements = _this._animationTimeout = null;
+                _this._$animationElements = _this._animationTimeout = null;
             }
         }
     });
@@ -267,7 +267,7 @@ and animates it accordingly.
 @return undefined
 **/
 Template['AnimateTemplate'].rendered = function(){
-    this.data._animationElements = this.findAll('.animate');
+    this.data._$animationElements = this.$('.animate');
 };
 
 
@@ -333,7 +333,7 @@ Template['AnimateTemplate'].getTemplate = function(guid){
                     if(instance.rendered)
                         instance.rendered.call(this);
 
-                    _this._animationElements = this.findAll('.animate');
+                    _this._$animationElements = this.$('.animate');
                 }
             }
         }
