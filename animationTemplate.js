@@ -37,9 +37,8 @@ The `Animate` Component.
 
 /**
 {{#Animate}} block helper, which will remove any `animate` class from its child elements when rendered.
-Additionally you can provide an `delay` parameter to set a delay (in ms) for the animation to start.
 
-    {{#Animate delay=200}}
+    {{#Animate}}
         <div class="animate">
             animates this content here
             (you must provide some css transitions for the animate class)
@@ -58,12 +57,15 @@ and animates it accordingly.
 @return undefined
 **/
 Template['Animate'].rendered = function(){
-    var delay = (this.data && this.data.delay) ? this.data.delay : 10,
-        $elements = this.$('.animate');
+    var $elements = this.$('.animate');
 
-    Meteor.setTimeout(function(){
+    Deps.afterFlush(function(){
+
+        // force the browser to render
+        $elements.css('width');
         $elements.removeClass('animate');
-    }, delay);
+        $elements = null;
+    });
 };
 
 
@@ -305,7 +307,6 @@ Template['AnimateTemplate'].getTemplate = function(guid){
         placeholder = (this.template) ? getUniqueKey(_this.template, guid) : this.placeholder,
         animateTemplate = Layout.get('_'+ placeholder),
         instance = null,
-        delay = this.delay || 0,
         context = {};
 
     if(Wrapper.isTemplate(animateTemplate)) {
@@ -340,8 +341,7 @@ Template['AnimateTemplate'].getTemplate = function(guid){
 
         return (instance) ? {
             template: instance,
-            context: context,
-            delay: delay
+            context: context
         } : null;
 
     } else

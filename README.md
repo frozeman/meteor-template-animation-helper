@@ -3,6 +3,8 @@ Installation
 
     $ mrt add template-animation-helper
 
+Update: the "delay" property was removed, as its not necessary anymore. If you need delays for animations please use the css declaration "transition-delay".
+
 Description
 -----------
 
@@ -100,9 +102,8 @@ The {{#Animate}} block helper
 ----
 
 `{{#Animate}}` block helper, which will remove any `animate` class from its child elements when rendered.
-Additionally you can provide an `delay` parameter to set a delay (in ms) for the animation to start.
 
-    {{#Animate delay=200}}
+    {{#Animate}}
         <div class="animate">
             animates this content here
             (you must provide some css transitions for the animate class)
