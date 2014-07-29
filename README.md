@@ -1,3 +1,18 @@
+Note: As of Meteor 0.8.3 I recommend using the `animation-helper` or `animation-helper-velocity` package instead.
+If you want to have the dynamic template rendering as well you can still use the `view-manager` package additionally to using the above packages e.g:
+
+
+    {{> DynamicTemplate placeholder="myPlaceholder"}}
+
+    <template name="comesIntoPlaceHolder">
+        {{#Animate}}
+            <div class="animate">
+            ...
+            </div>
+        {{/Animate}}
+    </template>
+
+
 Installation
 -----------
 
